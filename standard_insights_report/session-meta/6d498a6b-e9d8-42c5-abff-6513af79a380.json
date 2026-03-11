@@ -1,0 +1,33 @@
+{
+  "session_id": "6d498a6b-e9d8-42c5-abff-6513af79a380",
+  "project_path": "/Users/josh/Desktop/Whitepaper landing page",
+  "start_time": "2026-02-03T09:39:53.559Z",
+  "duration_minutes": 0,
+  "user_message_count": 1,
+  "assistant_message_count": 1,
+  "tool_counts": {},
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 3,
+  "output_tokens": 1,
+  "first_prompt": "what skills do you have access to within this current environment?",
+  "summary": "Claude's WordPress Development and Environment Skills",
+  "user_interruptions": 0,
+  "user_response_times": [],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_task_agent": false,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    4
+  ],
+  "user_message_timestamps": [
+    "2026-02-03T09:39:53.559Z"
+  ]
+}

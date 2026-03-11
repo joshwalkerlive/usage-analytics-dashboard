@@ -1,0 +1,42 @@
+{
+  "session_id": "9ab85f00-5c33-4b91-879f-5484b35bb513",
+  "project_path": "/Users/josh/Local Sites/engageaefonlineorg",
+  "start_time": "2026-01-27T16:05:29.309Z",
+  "duration_minutes": 2,
+  "user_message_count": 1,
+  "assistant_message_count": 23,
+  "tool_counts": {
+    "Read": 8,
+    "Glob": 6,
+    "Write": 1
+  },
+  "languages": {
+    "Markdown": 6,
+    "JavaScript": 1,
+    "CSS": 1
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 19299,
+  "output_tokens": 123,
+  "first_prompt": "I'm working on a Divi Wordpress site using WP Engine Local on my machine. I've run into an issue building a custom chart module for Divi. The issue is centered around the chart module not visualizing…",
+  "user_interruptions": 0,
+  "user_response_times": [],
+  "tool_errors": 1,
+  "tool_error_categories": {
+    "File Not Found": 1
+  },
+  "uses_task_agent": false,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 410,
+  "lines_removed": 0,
+  "files_modified": 1,
+  "message_hours": [
+    11
+  ],
+  "user_message_timestamps": [
+    "2026-01-27T16:05:29.309Z"
+  ]
+}

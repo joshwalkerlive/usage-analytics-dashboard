@@ -1,0 +1,54 @@
+{
+  "session_id": "ebb0a60c-eb76-418e-99c3-587ac0f114aa",
+  "project_path": "/Users/josh/Notion",
+  "start_time": "2026-02-02T18:27:01.601Z",
+  "duration_minutes": 597,
+  "user_message_count": 4,
+  "assistant_message_count": 105,
+  "tool_counts": {
+    "TodoWrite": 7,
+    "Write": 4,
+    "WebSearch": 28,
+    "WebFetch": 6,
+    "Task": 2,
+    "TaskOutput": 1,
+    "Bash": 15,
+    "Read": 1
+  },
+  "languages": {
+    "Markdown": 1
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 19128,
+  "output_tokens": 330,
+  "first_prompt": "# CONTEXT I'm conducting market research on the Notion template marketplace. I need you to execute Phases 0-2 of the attached research protocol, focusing on data collection only.  # YOUR SCOPE - Phase…",
+  "user_interruptions": 0,
+  "user_response_times": [
+    1321.61,
+    99.391
+  ],
+  "tool_errors": 1,
+  "tool_error_categories": {
+    "Other": 1
+  },
+  "uses_task_agent": true,
+  "uses_mcp": false,
+  "uses_web_search": true,
+  "uses_web_fetch": true,
+  "lines_added": 714,
+  "lines_removed": 0,
+  "files_modified": 4,
+  "message_hours": [
+    13,
+    21,
+    22,
+    22
+  ],
+  "user_message_timestamps": [
+    "2026-02-02T18:27:01.601Z",
+    "2026-02-03T02:53:38.360Z",
+    "2026-02-03T03:43:17.296Z",
+    "2026-02-03T03:45:10.763Z"
+  ]
+}

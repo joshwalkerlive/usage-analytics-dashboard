@@ -6,3 +6,112 @@ body {
   margin: 0;
   min-height: 100vh;
 }
+
+/* ─── Evening theme ─────────────────────────────────────────────────────────
+   Canvas starfield sits at z-index:1. Lift page content above it so the
+   stars bleed through only the semi-transparent card surfaces.            */
+html[data-theme="evening"] #root {
+  position: relative;
+  z-index: 2;
+}
+
+/* ─── Morning theme ─────────────────────────────────────────────────────────
+   Canvas sunrise glow sits at z-index:1. Lift page content above it so the
+   warm light bleeds through only the semi-transparent card surfaces.         */
+html[data-theme="morning"] #root {
+  position: relative;
+  z-index: 2;
+}
+
+/* ─── Retro theme ────────────────────────────────────────────────────────────
+   CRT scanline overlay, pixel-font headings, square corners.              */
+
+/* Scanlines */
+html[data-theme="retro"] body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.08) 2px,
+    rgba(0, 0, 0, 0.08) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Pixel fonts */
+html[data-theme="retro"] h1 {
+  font-family: "Press Start 2P", monospace;
+  font-size: 11px;
+  line-height: 2;
+}
+
+html[data-theme="retro"] h2 {
+  font-family: "Press Start 2P", monospace;
+  font-size: 10px;
+  line-height: 2;
+}
+
+html[data-theme="retro"] h3 {
+  font-family: "Press Start 2P", monospace;
+  font-size: 8px;
+  line-height: 2;
+}
+
+html[data-theme="retro"] button {
+  font-family: "Press Start 2P", monospace;
+  font-size: 8px;
+}
+
+/* Square everything */
+html[data-theme="retro"] *,
+html[data-theme="retro"] *::before,
+html[data-theme="retro"] *::after {
+  border-radius: 0 !important;
+}
+
+/* Neon glow borders on cards */
+html[data-theme="retro"] .bg-navy-900\/50 {
+  border-color: rgba(255, 45, 120, 0.5) !important;
+  box-shadow:
+    0 0 6px rgba(255, 45, 120, 0.25),
+    0 0 20px rgba(255, 45, 120, 0.08),
+    inset 0 0 8px rgba(255, 45, 120, 0.05);
+}
+
+/* Animated neon pulse on hover */
+html[data-theme="retro"] .bg-navy-900\/50:hover {
+  border-color: rgba(0, 229, 255, 0.6) !important;
+  box-shadow:
+    0 0 8px rgba(0, 229, 255, 0.35),
+    0 0 24px rgba(0, 229, 255, 0.12),
+    inset 0 0 10px rgba(0, 229, 255, 0.06);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+/* Retro canvas background — same z-index pattern as evening / morning */
+html[data-theme="retro"] #root {
+  position: relative;
+  z-index: 2;
+}
+
+/* Neon text glow on section headings */
+html[data-theme="retro"] h2 {
+  text-shadow: 0 0 8px rgba(0, 229, 255, 0.6), 0 0 20px rgba(0, 229, 255, 0.2);
+}
+
+/* Neon accent glow on interactive elements */
+html[data-theme="retro"] select,
+html[data-theme="retro"] input {
+  border-color: rgba(255, 45, 120, 0.4) !important;
+  box-shadow: 0 0 4px rgba(255, 45, 120, 0.15);
+}
+
+html[data-theme="retro"] select:focus,
+html[data-theme="retro"] input:focus {
+  border-color: rgba(0, 229, 255, 0.6) !important;
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.3);
+}

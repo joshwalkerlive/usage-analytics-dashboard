@@ -1,0 +1,56 @@
+{
+  "session_id": "f1b006f9-4261-443e-8290-faa9589a61f8",
+  "project_path": "/Users/josh/Desktop/Whitepaper landing page",
+  "start_time": "2026-01-30T00:27:37.246Z",
+  "duration_minutes": 810,
+  "user_message_count": 6,
+  "assistant_message_count": 40,
+  "tool_counts": {
+    "Task": 1,
+    "Write": 11,
+    "Bash": 3,
+    "TodoWrite": 9
+  },
+  "languages": {
+    "Markdown": 11
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 218,
+  "output_tokens": 373,
+  "first_prompt": "is there a way I can connect you to a NotebookLM project within VS Code? and what is the best way to connect you to a git repo on github.com?",
+  "summary": "Divi 5 Framework Documentation Research & Build",
+  "user_interruptions": 0,
+  "user_response_times": [
+    401.363,
+    367.604,
+    268.047
+  ],
+  "tool_errors": 2,
+  "tool_error_categories": {
+    "Other": 2
+  },
+  "uses_task_agent": true,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 7501,
+  "lines_removed": 0,
+  "files_modified": 10,
+  "message_hours": [
+    19,
+    19,
+    19,
+    19,
+    19,
+    8
+  ],
+  "user_message_timestamps": [
+    "2026-01-30T00:27:37.246Z",
+    "2026-01-30T00:27:37.246Z",
+    "2026-01-30T00:34:31.109Z",
+    "2026-01-30T00:40:48.193Z",
+    "2026-01-30T00:45:22.480Z",
+    "2026-01-30T13:44:18.972Z"
+  ]
+}

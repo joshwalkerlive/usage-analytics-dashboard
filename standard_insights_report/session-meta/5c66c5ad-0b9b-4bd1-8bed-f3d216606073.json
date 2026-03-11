@@ -1,0 +1,47 @@
+{
+  "session_id": "5c66c5ad-0b9b-4bd1-8bed-f3d216606073",
+  "project_path": "/Users/josh/Documents/Ren Projects/Project Ao1",
+  "start_time": "2026-03-03T21:55:12.932Z",
+  "duration_minutes": 5,
+  "user_message_count": 5,
+  "assistant_message_count": 26,
+  "tool_counts": {
+    "Skill": 1,
+    "Bash": 13
+  },
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 78,
+  "output_tokens": 159,
+  "first_prompt": "give me my latest insights for the last four weeks /insights",
+  "user_interruptions": 0,
+  "user_response_times": [
+    68.78,
+    116.115,
+    4.877
+  ],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_task_agent": false,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    16,
+    16,
+    16,
+    17,
+    17
+  ],
+  "user_message_timestamps": [
+    "2026-03-03T21:55:15.330Z",
+    "2026-03-03T21:55:22.861Z",
+    "2026-03-03T21:57:00.067Z",
+    "2026-03-03T22:00:15.835Z",
+    "2026-03-03T22:00:24.927Z"
+  ]
+}

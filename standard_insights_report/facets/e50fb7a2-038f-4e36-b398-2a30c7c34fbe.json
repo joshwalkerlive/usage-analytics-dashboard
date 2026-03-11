@@ -1,0 +1,15 @@
+{
+  "underlying_goal": "Continue and complete a 12-week AI enablement training program documentation suite for a meeting with Kyle",
+  "goal_categories": {
+    "document_creation": 1
+  },
+  "outcome": "fully_achieved",
+  "user_satisfaction_counts": {},
+  "claude_helpfulness": "very_helpful",
+  "session_type": "single_task",
+  "friction_counts": {},
+  "friction_detail": "",
+  "primary_success": "multi_file_changes",
+  "brief_summary": "User continued a previous session to complete 6 documents for an AI enablement training program, and Claude delivered all documents ready for the meeting.",
+  "session_id": "e50fb7a2-038f-4e36-b398-2a30c7c34fbe"
+}

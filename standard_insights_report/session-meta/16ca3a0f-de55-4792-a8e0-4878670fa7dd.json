@@ -1,0 +1,41 @@
+{
+  "session_id": "16ca3a0f-de55-4792-a8e0-4878670fa7dd",
+  "project_path": "/Users/josh/Notion/AP3 Podcast OS",
+  "start_time": "2026-02-08T15:20:40.922Z",
+  "duration_minutes": 8,
+  "user_message_count": 1,
+  "assistant_message_count": 23,
+  "tool_counts": {
+    "Bash": 3,
+    "Read": 4,
+    "TodoWrite": 3,
+    "Write": 2,
+    "Edit": 1
+  },
+  "languages": {
+    "Markdown": 5,
+    "Python": 2
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 69,
+  "output_tokens": 80,
+  "first_prompt": "No prompt",
+  "user_interruptions": 0,
+  "user_response_times": [],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_task_agent": false,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 1204,
+  "lines_removed": 4,
+  "files_modified": 3,
+  "message_hours": [
+    10
+  ],
+  "user_message_timestamps": [
+    "2026-02-08T15:20:40.922Z"
+  ]
+}

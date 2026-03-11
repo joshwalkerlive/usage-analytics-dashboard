@@ -5,6 +5,15 @@ import type {
   ToolUsageStat,
   GoalDistribution,
   GoalCategory,
+  LanguageStat,
+  SessionTypeStat,
+  ResponseTimeBucket,
+  TimeOfDayBucket,
+  ToolErrorStat,
+  HelpfulFactorStat,
+  OutcomeStat,
+  FrictionTypeStat,
+  InferredSatisfaction,
 } from "./types";
 
 const GOAL_KEYWORDS: Record<GoalCategory, string[]> = {
@@ -171,4 +180,267 @@ export function computeGoalDistribution(sessions: AnalyzedSession[]): GoalDistri
     count,
     percentage: (count / total) * 100,
   }));
+}
+
+// --- Expanded computation functions ---
+
+const EXTENSION_LANGUAGE_MAP: Record<string, string> = {
+  ts: "TypeScript",
+  tsx: "TypeScript",
+  js: "JavaScript",
+  jsx: "JavaScript",
+  py: "Python",
+  rb: "Ruby",
+  go: "Go",
+  rs: "Rust",
+  java: "Java",
+  kt: "Kotlin",
+  swift: "Swift",
+  css: "CSS",
+  scss: "CSS",
+  html: "HTML",
+  json: "JSON",
+  yaml: "YAML",
+  yml: "YAML",
+  md: "Markdown",
+  sql: "SQL",
+  sh: "Shell",
+  bash: "Shell",
+  toml: "TOML",
+  xml: "XML",
+};
+
+export function computeLanguageStats(sessions: AnalyzedSession[], rawSessions: RawSession[]): LanguageStat[] {
+  const langCounts: Record<string, number> = {};
+
+  for (const raw of rawSessions) {
+    for (const msg of raw.messages) {
+      if (!msg.toolCalls) continue;
+      for (const tc of msg.toolCalls) {
+        // Extract file paths from tool args
+        const args = tc.args as Record<string, unknown>;
+        const filePath = (args.file_path ?? args.path ?? args.command ?? "") as string;
+        const ext = filePath.split(".").pop()?.toLowerCase() ?? "";
+        const lang = EXTENSION_LANGUAGE_MAP[ext];
+        if (lang) {
+          langCounts[lang] = (langCounts[lang] ?? 0) + 1;
+        }
+      }
+    }
+  }
+
+  return Object.entries(langCounts)
+    .map(([language, fileCount]) => ({ language, fileCount }))
+    .sort((a, b) => b.fileCount - a.fileCount);
+}
+
+export function computeSessionTypeStats(sessions: AnalyzedSession[]): SessionTypeStat[] {
+  const types: Record<string, number> = {};
+
+  for (const s of sessions) {
+    let sessionType: string;
+    if (s.messageCount <= 4) {
+      sessionType = "Quick Task";
+    } else if (s.toolCallCount === 0) {
+      sessionType = "Conversation";
+    } else if (s.toolCallCount > 20) {
+      sessionType = "Deep Work";
+    } else if (s.messageCount > 10 && s.toolCallCount > 5) {
+      sessionType = "Multi-Step";
+    } else {
+      sessionType = "Standard";
+    }
+    types[sessionType] = (types[sessionType] ?? 0) + 1;
+  }
+
+  return Object.entries(types)
+    .map(([type, count]) => ({ type, count }))
+    .sort((a, b) => b.count - a.count);
+}
+
+export function computeResponseTimeBuckets(rawSessions: RawSession[]): ResponseTimeBucket[] {
+  const delays: number[] = [];
+
+  for (const session of rawSessions) {
+    const msgs = session.messages;
+    for (let i = 1; i < msgs.length; i++) {
+      const prev = msgs[i - 1];
+      const curr = msgs[i];
+      if (prev.role === "assistant" && curr.role === "user" && prev.timestamp && curr.timestamp) {
+        const delay = new Date(curr.timestamp).getTime() - new Date(prev.timestamp).getTime();
+        if (delay > 0 && delay < 600000) { // under 10 min — realistic response
+          delays.push(delay);
+        }
+      }
+    }
+  }
+
+  const buckets: { range: string; min: number; max: number }[] = [
+    { range: "< 5s", min: 0, max: 5000 },
+    { range: "5–15s", min: 5000, max: 15000 },
+    { range: "15–30s", min: 15000, max: 30000 },
+    { range: "30s–1m", min: 30000, max: 60000 },
+    { range: "1–3m", min: 60000, max: 180000 },
+    { range: "3–10m", min: 180000, max: 600000 },
+  ];
+
+  return buckets.map(({ range, min, max }) => {
+    const inBucket = delays.filter((d) => d >= min && d < max);
+    const sorted = [...inBucket].sort((a, b) => a - b);
+    const medianMs = sorted.length > 0 ? sorted[Math.floor(sorted.length / 2)] : 0;
+    return { range, count: inBucket.length, medianMs };
+  });
+}
+
+export function computeTimeOfDayBuckets(rawSessions: RawSession[]): TimeOfDayBucket[] {
+  const periodMap: Record<string, { count: number; hours: number[] }> = {
+    "Early Morning (5–8)": { count: 0, hours: [] },
+    "Morning (8–12)": { count: 0, hours: [] },
+    "Afternoon (12–17)": { count: 0, hours: [] },
+    "Evening (17–21)": { count: 0, hours: [] },
+    "Night (21–5)": { count: 0, hours: [] },
+  };
+
+  for (const session of rawSessions) {
+    if (!session.timestamp) continue;
+    const hour = new Date(session.timestamp).getHours();
+    let period: string;
+    if (hour >= 5 && hour < 8) period = "Early Morning (5–8)";
+    else if (hour >= 8 && hour < 12) period = "Morning (8–12)";
+    else if (hour >= 12 && hour < 17) period = "Afternoon (12–17)";
+    else if (hour >= 17 && hour < 21) period = "Evening (17–21)";
+    else period = "Night (21–5)";
+
+    periodMap[period].count++;
+    periodMap[period].hours.push(hour);
+  }
+
+  return Object.entries(periodMap).map(([period, data]) => ({
+    period,
+    count: data.count,
+    hours: data.hours,
+  }));
+}
+
+export function computeToolErrorStats(sessions: AnalyzedSession[], rawSessions: RawSession[]): ToolErrorStat[] {
+  const errorTypes: Record<string, number> = {};
+
+  for (const raw of rawSessions) {
+    for (const msg of raw.messages) {
+      if (!msg.toolCalls) continue;
+      for (const tc of msg.toolCalls) {
+        if (!tc.error) continue;
+        const tool = tc.tool.toLowerCase();
+        let errorType: string;
+        if (tool.includes("bash") || tool.includes("command")) {
+          errorType = "Command Failed";
+        } else if (tool.includes("read") || tool.includes("write") || tool.includes("edit")) {
+          errorType = "File Operation";
+        } else {
+          errorType = "Tool Error";
+        }
+        errorTypes[errorType] = (errorTypes[errorType] ?? 0) + 1;
+      }
+    }
+  }
+
+  return Object.entries(errorTypes)
+    .map(([errorType, count]) => ({ errorType, count }))
+    .sort((a, b) => b.count - a.count);
+}
+
+export function computeHelpfulFactorStats(sessions: AnalyzedSession[]): HelpfulFactorStat[] {
+  const factors: Record<string, number> = {};
+
+  for (const s of sessions) {
+    // Sessions with low friction and high satisfaction signal helpfulness
+    if (s.frictionScore < 30 && s.satisfactionScore > 70) {
+      factors["Low Friction"] = (factors["Low Friction"] ?? 0) + 1;
+    }
+    if (s.toolCallCount > 5 && s.toolErrorCount === 0) {
+      factors["Error-Free Tools"] = (factors["Error-Free Tools"] ?? 0) + 1;
+    }
+    if (s.durationMs < 300000 && s.toolCallCount > 3) {
+      factors["Fast Completion"] = (factors["Fast Completion"] ?? 0) + 1;
+    }
+    if (s.messageCount <= 4 && s.toolCallCount > 0) {
+      factors["Concise Interaction"] = (factors["Concise Interaction"] ?? 0) + 1;
+    }
+    if (s.toolCallCount > 10) {
+      factors["Deep Automation"] = (factors["Deep Automation"] ?? 0) + 1;
+    }
+  }
+
+  return Object.entries(factors)
+    .map(([factor, count]) => ({ factor, count }))
+    .sort((a, b) => b.count - a.count);
+}
+
+export function computeOutcomeStats(sessions: AnalyzedSession[]): OutcomeStat[] {
+  const outcomes: Record<string, number> = {};
+
+  for (const s of sessions) {
+    let outcome: string;
+    if (s.satisfactionScore >= 80 && s.frictionScore < 30) {
+      outcome = "Smooth Success";
+    } else if (s.satisfactionScore >= 60) {
+      outcome = "Completed";
+    } else if (s.frictionScore > 60) {
+      outcome = "High Friction";
+    } else if (s.toolErrorCount > 3) {
+      outcome = "Error-Heavy";
+    } else {
+      outcome = "Neutral";
+    }
+    outcomes[outcome] = (outcomes[outcome] ?? 0) + 1;
+  }
+
+  return Object.entries(outcomes)
+    .map(([outcome, count]) => ({ outcome, count }))
+    .sort((a, b) => b.count - a.count);
+}
+
+export function computeFrictionTypeStats(sessions: AnalyzedSession[]): FrictionTypeStat[] {
+  const types: Record<string, number> = {};
+
+  for (const s of sessions) {
+    if (s.frictionScore < 20) continue; // skip low-friction sessions
+
+    if (s.toolErrorCount > 2) {
+      types["Tool Errors"] = (types["Tool Errors"] ?? 0) + 1;
+    }
+    if (s.messageCount > 15) {
+      types["Long Back-and-Forth"] = (types["Long Back-and-Forth"] ?? 0) + 1;
+    }
+    if (s.durationMs > 600000) {
+      types["Extended Duration"] = (types["Extended Duration"] ?? 0) + 1;
+    }
+    if (s.toolCallCount > 0 && s.toolErrorCount / s.toolCallCount > 0.3) {
+      types["High Error Rate"] = (types["High Error Rate"] ?? 0) + 1;
+    }
+  }
+
+  return Object.entries(types)
+    .map(([type, count]) => ({ type, count }))
+    .sort((a, b) => b.count - a.count);
+}
+
+export function computeInferredSatisfaction(sessions: AnalyzedSession[]): InferredSatisfaction[] {
+  const levels: Record<string, number> = {
+    "Very Satisfied": 0,
+    "Satisfied": 0,
+    "Neutral": 0,
+    "Unsatisfied": 0,
+  };
+
+  for (const s of sessions) {
+    if (s.satisfactionScore >= 80) levels["Very Satisfied"]++;
+    else if (s.satisfactionScore >= 60) levels["Satisfied"]++;
+    else if (s.satisfactionScore >= 40) levels["Neutral"]++;
+    else levels["Unsatisfied"]++;
+  }
+
+  return Object.entries(levels)
+    .map(([level, count]) => ({ level, count }))
+    .filter((item) => item.count > 0);
 }

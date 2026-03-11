@@ -1,0 +1,20 @@
+{
+  "underlying_goal": "User wanted to use the /oh-my-claudecode:team slash command to spawn coordinated agents for a shared task, but didn't provide the required arguments",
+  "goal_categories": {
+    "warmup_minimal": 1
+  },
+  "outcome": "not_achieved",
+  "user_satisfaction_counts": {
+    "frustrated": 1
+  },
+  "claude_helpfulness": "unhelpful",
+  "session_type": "single_task",
+  "friction_counts": {
+    "misunderstood_request": 1,
+    "wrong_approach": 1
+  },
+  "friction_detail": "The slash command was invoked without arguments, and instead of asking the user what they wanted, Claude started autonomously exploring the codebase until the user interrupted.",
+  "primary_success": "none",
+  "brief_summary": "User invoked a team command without arguments; Claude explored the codebase autonomously instead of clarifying the request, and the user interrupted the session.",
+  "session_id": "ed6526e8-78f4-40ad-82e5-7ae798d34731"
+}

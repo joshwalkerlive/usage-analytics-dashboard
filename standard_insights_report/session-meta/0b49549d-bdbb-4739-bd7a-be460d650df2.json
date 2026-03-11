@@ -1,0 +1,36 @@
+{
+  "session_id": "0b49549d-bdbb-4739-bd7a-be460d650df2",
+  "project_path": "/Users/josh/_agents",
+  "start_time": "2026-02-17T22:32:50.100Z",
+  "duration_minutes": 0,
+  "user_message_count": 1,
+  "assistant_message_count": 2,
+  "tool_counts": {
+    "Bash": 1
+  },
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 6,
+  "output_tokens": 2,
+  "first_prompt": "cp statusline.sh ~/.claude/statusline.sh chmod +x ~/.claude/statusline.sh",
+  "user_interruptions": 0,
+  "user_response_times": [],
+  "tool_errors": 1,
+  "tool_error_categories": {
+    "Command Failed": 1
+  },
+  "uses_task_agent": false,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    17
+  ],
+  "user_message_timestamps": [
+    "2026-02-17T22:32:51.414Z"
+  ]
+}

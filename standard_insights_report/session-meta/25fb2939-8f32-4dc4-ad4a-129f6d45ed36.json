@@ -1,0 +1,79 @@
+{
+  "session_id": "25fb2939-8f32-4dc4-ad4a-129f6d45ed36",
+  "project_path": "/Users/josh/Documents/VS Code/Projects/GA4 Analytics App",
+  "start_time": "2026-01-23T21:12:01.518Z",
+  "duration_minutes": 35,
+  "user_message_count": 12,
+  "assistant_message_count": 182,
+  "tool_counts": {
+    "Bash": 30,
+    "Read": 28,
+    "Glob": 7,
+    "Edit": 27,
+    "TodoWrite": 4,
+    "Write": 2,
+    "KillShell": 2
+  },
+  "languages": {
+    "JSON": 1,
+    "TypeScript": 47
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 4715,
+  "output_tokens": 720,
+  "first_prompt": "npx neonctl@latest init",
+  "user_interruptions": 0,
+  "user_response_times": [
+    491.445,
+    242.639,
+    117.835,
+    46.747,
+    14.645,
+    51.704,
+    61.354,
+    25.738,
+    117.986,
+    201.523
+  ],
+  "tool_errors": 5,
+  "tool_error_categories": {
+    "Command Failed": 2,
+    "Other": 3
+  },
+  "uses_task_agent": false,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 102,
+  "lines_removed": 105,
+  "files_modified": 11,
+  "message_hours": [
+    16,
+    16,
+    16,
+    16,
+    16,
+    16,
+    16,
+    16,
+    16,
+    16,
+    16,
+    16
+  ],
+  "user_message_timestamps": [
+    "2026-01-23T21:12:01.518Z",
+    "2026-01-23T21:12:01.518Z",
+    "2026-01-23T21:20:50.998Z",
+    "2026-01-23T21:26:05.845Z",
+    "2026-01-23T21:28:55.986Z",
+    "2026-01-23T21:34:47.904Z",
+    "2026-01-23T21:36:30.969Z",
+    "2026-01-23T21:37:36.861Z",
+    "2026-01-23T21:38:41.902Z",
+    "2026-01-23T21:39:20.546Z",
+    "2026-01-23T21:41:56.260Z",
+    "2026-01-23T21:46:17.350Z"
+  ]
+}

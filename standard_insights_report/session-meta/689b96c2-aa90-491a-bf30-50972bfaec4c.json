@@ -1,0 +1,40 @@
+{
+  "session_id": "689b96c2-aa90-491a-bf30-50972bfaec4c",
+  "project_path": "/Users/josh/divi5",
+  "start_time": "2026-01-31T05:12:02.905Z",
+  "duration_minutes": 1,
+  "user_message_count": 2,
+  "assistant_message_count": 8,
+  "tool_counts": {
+    "Bash": 4
+  },
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 30,
+  "output_tokens": 40,
+  "first_prompt": "do I have the GitHub CLI installed already? I can't remember",
+  "user_interruptions": 0,
+  "user_response_times": [
+    5.047
+  ],
+  "tool_errors": 2,
+  "tool_error_categories": {
+    "Command Failed": 2
+  },
+  "uses_task_agent": false,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    0,
+    0
+  ],
+  "user_message_timestamps": [
+    "2026-01-31T05:12:02.905Z",
+    "2026-01-31T05:12:20.141Z"
+  ]
+}

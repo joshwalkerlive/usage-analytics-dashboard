@@ -1,0 +1,18 @@
+{
+  "underlying_goal": "Find previously created Divi 5 documentation files and learn how to view past conversation history",
+  "goal_categories": {
+    "file_location": 1,
+    "tool_usage_question": 1
+  },
+  "outcome": "mostly_achieved",
+  "user_satisfaction_counts": {
+    "likely_satisfied": 2
+  },
+  "claude_helpfulness": "moderately_helpful",
+  "session_type": "quick_question",
+  "friction_counts": {},
+  "friction_detail": "",
+  "primary_success": "fast_accurate_search",
+  "brief_summary": "User wanted to find Divi documentation files and learn about viewing past conversations; Claude found the files and explained the /history command.",
+  "session_id": "27ec9f5d-0017-408d-ae09-35972bf90b2a"
+}

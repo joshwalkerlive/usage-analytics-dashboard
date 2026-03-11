@@ -1,0 +1,51 @@
+{
+  "session_id": "d8573de7-5a33-4976-b14e-9018680f817e",
+  "project_path": "/Users/josh/Local Sites/engageaefonlineorg/app/public",
+  "start_time": "2026-02-15T18:45:27.198Z",
+  "duration_minutes": 3,
+  "user_message_count": 6,
+  "assistant_message_count": 11,
+  "tool_counts": {
+    "Skill": 1,
+    "TodoWrite": 1,
+    "Bash": 2
+  },
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 23,
+  "output_tokens": 15,
+  "first_prompt": "how do I enable Claude Agent Teams?",
+  "user_interruptions": 1,
+  "user_response_times": [
+    27.526,
+    112.203
+  ],
+  "tool_errors": 1,
+  "tool_error_categories": {
+    "User Rejected": 1
+  },
+  "uses_task_agent": false,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    13,
+    13,
+    13,
+    13,
+    13,
+    13
+  ],
+  "user_message_timestamps": [
+    "2026-02-15T18:45:33.351Z",
+    "2026-02-15T18:46:01.402Z",
+    "2026-02-15T18:48:04.364Z",
+    "2026-02-15T18:48:07.017Z",
+    "2026-02-15T18:48:14.497Z",
+    "2026-02-15T18:48:32.251Z"
+  ]
+}

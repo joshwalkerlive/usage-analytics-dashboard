@@ -1,0 +1,21 @@
+{
+  "underlying_goal": "Get a summary/report of their recent Claude Code session activity over the last four weeks",
+  "goal_categories": {
+    "data_retrieval_and_reporting": 2,
+    "file_location_question": 1,
+    "open_file": 1
+  },
+  "outcome": "mostly_achieved",
+  "user_satisfaction_counts": {
+    "likely_satisfied": 3
+  },
+  "claude_helpfulness": "very_helpful",
+  "session_type": "multi_task",
+  "friction_counts": {
+    "wrong_approach": 1
+  },
+  "friction_detail": "Claude initially used the unified-insights skill when the user then asked for a non-unified-insights approach, requiring a second attempt.",
+  "primary_success": "fast_accurate_search",
+  "brief_summary": "User wanted insights reports on their last 4 weeks of sessions; Claude generated two reports (one via unified-insights skill, one raw) and opened the HTML report, though the user had to redirect away from the unified-insights skill once.",
+  "session_id": "5c66c5ad-0b9b-4bd1-8bed-f3d216606073"
+}

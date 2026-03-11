@@ -1,0 +1,42 @@
+{
+  "session_id": "08565723-8414-4733-a33b-ef38bbc64baf",
+  "project_path": "/Users/josh/_agents",
+  "start_time": "2026-02-17T22:40:08.548Z",
+  "duration_minutes": 2,
+  "user_message_count": 4,
+  "assistant_message_count": 5,
+  "tool_counts": {
+    "Skill": 1,
+    "TodoWrite": 1,
+    "Task": 1
+  },
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 15,
+  "output_tokens": 29,
+  "first_prompt": "Unknown skill: statusline",
+  "user_interruptions": 0,
+  "user_response_times": [],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_task_agent": true,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    17,
+    17,
+    17,
+    17
+  ],
+  "user_message_timestamps": [
+    "2026-02-17T22:40:09.626Z",
+    "2026-02-17T22:40:09.626Z",
+    "2026-02-17T22:41:09.750Z",
+    "2026-02-17T22:41:20.467Z"
+  ]
+}

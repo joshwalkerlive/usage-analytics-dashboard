@@ -1,0 +1,19 @@
+{
+  "underlying_goal": "Install WordPress agent skills globally and set up a GitHub MCP server for real-time repository access",
+  "goal_categories": {
+    "package_installation": 1,
+    "list_information": 1,
+    "integration_setup": 1
+  },
+  "outcome": "fully_achieved",
+  "user_satisfaction_counts": {
+    "likely_satisfied": 3
+  },
+  "claude_helpfulness": "very_helpful",
+  "session_type": "multi_task",
+  "friction_counts": {},
+  "friction_detail": "",
+  "primary_success": "correct_code_edits",
+  "brief_summary": "User wanted to install WordPress agent skills and set up a GitHub MCP server with their token, and Claude successfully completed all three tasks without issues.",
+  "session_id": "57c6d0af-6162-422e-9eac-82f6d5f49e25"
+}

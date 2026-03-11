@@ -1,0 +1,50 @@
+{
+  "session_id": "1f5028a5-e10c-40f9-ac6f-dec06c430c4b",
+  "project_path": "/Users/josh/Local Sites/engageaefonlineorg/app/public",
+  "start_time": "2026-02-15T18:48:42.311Z",
+  "duration_minutes": 25,
+  "user_message_count": 3,
+  "assistant_message_count": 24,
+  "tool_counts": {
+    "Skill": 1,
+    "Read": 3,
+    "Glob": 1,
+    "Bash": 1,
+    "TodoWrite": 1,
+    "Task": 9
+  },
+  "languages": {
+    "Markdown": 2
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 132,
+  "output_tokens": 36,
+  "first_prompt": "leverage /ultrawork in the /josh/_agents/ folder and leverage the resources and instructions in the /josh/_agents/skills-dev folder to get started with a team of agents to execute and complete the pro…",
+  "user_interruptions": 1,
+  "user_response_times": [
+    930.584
+  ],
+  "tool_errors": 8,
+  "tool_error_categories": {
+    "Other": 7,
+    "User Rejected": 1
+  },
+  "uses_task_agent": true,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    13,
+    13,
+    14
+  ],
+  "user_message_timestamps": [
+    "2026-02-15T18:57:02.331Z",
+    "2026-02-15T18:57:09.016Z",
+    "2026-02-15T19:14:05.537Z"
+  ]
+}

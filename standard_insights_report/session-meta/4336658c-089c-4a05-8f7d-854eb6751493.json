@@ -1,0 +1,67 @@
+{
+  "session_id": "4336658c-089c-4a05-8f7d-854eb6751493",
+  "project_path": "/Users/josh/Agentic Workspace",
+  "start_time": "2026-02-02T13:50:13.532Z",
+  "duration_minutes": 13,
+  "user_message_count": 8,
+  "assistant_message_count": 28,
+  "tool_counts": {
+    "Task": 2,
+    "Bash": 4,
+    "Write": 1,
+    "ToolSearch": 2,
+    "ListMcpResourcesTool": 2,
+    "Read": 2
+  },
+  "languages": {
+    "JSON": 2
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 136,
+  "output_tokens": 87,
+  "first_prompt": "help me set up a GitHub MCP",
+  "summary": "GitHub MCP setup and troubleshooting in workspace",
+  "user_interruptions": 1,
+  "user_response_times": [
+    371.778,
+    371.778,
+    98.154,
+    124.004,
+    4.982,
+    6.947,
+    35.203
+  ],
+  "tool_errors": 2,
+  "tool_error_categories": {
+    "Command Failed": 1,
+    "User Rejected": 1
+  },
+  "uses_task_agent": true,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 12,
+  "lines_removed": 0,
+  "files_modified": 1,
+  "message_hours": [
+    8,
+    8,
+    8,
+    8,
+    9,
+    9,
+    9,
+    9
+  ],
+  "user_message_timestamps": [
+    "2026-02-02T13:50:13.532Z",
+    "2026-02-02T13:57:02.336Z",
+    "2026-02-02T13:57:02.336Z",
+    "2026-02-02T13:59:02.899Z",
+    "2026-02-02T14:01:16.192Z",
+    "2026-02-02T14:01:37.694Z",
+    "2026-02-02T14:02:01.827Z",
+    "2026-02-02T14:02:42.150Z"
+  ]
+}

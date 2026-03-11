@@ -1,0 +1,20 @@
+{
+  "underlying_goal": "Ensure the episode-kickoff skill is properly installed in the global top-level skills folder for use across Claude Cowork and Claude Code environments",
+  "goal_categories": {
+    "skill_installation_verification": 1,
+    "research_invocation": 1
+  },
+  "outcome": "fully_achieved",
+  "user_satisfaction_counts": {
+    "likely_satisfied": 1
+  },
+  "claude_helpfulness": "moderately_helpful",
+  "session_type": "multi_task",
+  "friction_counts": {
+    "wrong_approach": 2
+  },
+  "friction_detail": "Claude repeatedly triggered the skill management tool but needed the user to paste the skill documentation before it could proceed correctly.",
+  "primary_success": "correct_code_edits",
+  "brief_summary": "User wanted the episode-kickoff skill installed globally and verified; after some tool invocation friction, Claude confirmed it was properly installed.",
+  "session_id": "84ae3ec0-c378-4803-b7f0-39fe921bbac2"
+}

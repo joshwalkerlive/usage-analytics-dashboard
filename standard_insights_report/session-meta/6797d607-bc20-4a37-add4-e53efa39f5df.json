@@ -1,0 +1,49 @@
+{
+  "session_id": "6797d607-bc20-4a37-add4-e53efa39f5df",
+  "project_path": "/Users/josh",
+  "start_time": "2026-01-31T03:14:03.968Z",
+  "duration_minutes": 106,
+  "user_message_count": 4,
+  "assistant_message_count": 28,
+  "tool_counts": {
+    "Bash": 11,
+    "WebSearch": 1,
+    "WebFetch": 1,
+    "TodoWrite": 1
+  },
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 143,
+  "output_tokens": 128,
+  "first_prompt": "help me instal Google Gemini CLI. This is the command but when I run it in terminal I keep getting a permissions error: npm install -g @google/gemini-cli",
+  "user_interruptions": 0,
+  "user_response_times": [
+    285.152,
+    315.544,
+    334.392
+  ],
+  "tool_errors": 1,
+  "tool_error_categories": {
+    "Command Failed": 1
+  },
+  "uses_task_agent": false,
+  "uses_mcp": false,
+  "uses_web_search": true,
+  "uses_web_fetch": true,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    22,
+    23,
+    23,
+    0
+  ],
+  "user_message_timestamps": [
+    "2026-01-31T03:14:03.968Z",
+    "2026-01-31T04:47:56.488Z",
+    "2026-01-31T04:53:23.938Z",
+    "2026-01-31T05:00:07.184Z"
+  ]
+}

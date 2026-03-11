@@ -1,9 +1,18 @@
 import type { RawSession, DashboardData, DateRange } from "./types";
-import { analyzeSession } from "./metrics";
 import {
+  analyzeSession,
   computeSessionMetrics,
   computeToolUsageStats,
   computeGoalDistribution,
+  computeLanguageStats,
+  computeSessionTypeStats,
+  computeResponseTimeBuckets,
+  computeTimeOfDayBuckets,
+  computeToolErrorStats,
+  computeHelpfulFactorStats,
+  computeOutcomeStats,
+  computeFrictionTypeStats,
+  computeInferredSatisfaction,
 } from "./metrics";
 import { filterByDateRange } from "./filters";
 
@@ -17,6 +26,7 @@ export function buildDashboardData(
     sessions = filterByDateRange(sessions, dateRange);
   }
 
+  // Original computed data
   const sessionMetrics = computeSessionMetrics(sessions);
   const toolUsageStats = computeToolUsageStats(sessions);
   const goalDistribution = computeGoalDistribution(sessions);
@@ -35,6 +45,17 @@ export function buildDashboardData(
     date: s.date,
   }));
 
+  // Expanded chart data — new computation functions
+  const languageStats = computeLanguageStats(sessions, rawSessions);
+  const sessionTypeStats = computeSessionTypeStats(sessions);
+  const responseTimeBuckets = computeResponseTimeBuckets(rawSessions);
+  const timeOfDayBuckets = computeTimeOfDayBuckets(rawSessions);
+  const toolErrorStats = computeToolErrorStats(sessions, rawSessions);
+  const helpfulFactorStats = computeHelpfulFactorStats(sessions);
+  const outcomeStats = computeOutcomeStats(sessions);
+  const frictionTypeStats = computeFrictionTypeStats(sessions);
+  const inferredSatisfaction = computeInferredSatisfaction(sessions);
+
   return {
     sessions,
     sessionMetrics,
@@ -42,5 +63,14 @@ export function buildDashboardData(
     goalDistribution,
     frictionOverTime,
     satisfactionDistribution,
+    languageStats,
+    sessionTypeStats,
+    responseTimeBuckets,
+    timeOfDayBuckets,
+    toolErrorStats,
+    helpfulFactorStats,
+    outcomeStats,
+    frictionTypeStats,
+    inferredSatisfaction,
   };
 }

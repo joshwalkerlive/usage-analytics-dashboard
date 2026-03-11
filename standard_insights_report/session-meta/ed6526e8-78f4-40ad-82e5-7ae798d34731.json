@@ -1,0 +1,43 @@
+{
+  "session_id": "ed6526e8-78f4-40ad-82e5-7ae798d34731",
+  "project_path": "/Users/josh/_agents",
+  "start_time": "2026-02-15T19:14:30.449Z",
+  "duration_minutes": 9,
+  "user_message_count": 3,
+  "assistant_message_count": 10,
+  "tool_counts": {
+    "AskUserQuestion": 1,
+    "Bash": 5
+  },
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 28,
+  "output_tokens": 10,
+  "first_prompt": "No prompt",
+  "user_interruptions": 1,
+  "user_response_times": [
+    61.439
+  ],
+  "tool_errors": 1,
+  "tool_error_categories": {
+    "User Rejected": 1
+  },
+  "uses_task_agent": false,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    14,
+    14,
+    14
+  ],
+  "user_message_timestamps": [
+    "2026-02-15T19:20:43.651Z",
+    "2026-02-15T19:20:43.651Z",
+    "2026-02-15T19:23:00.453Z"
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "session_id": "8da807b4-9c13-473c-8eac-0f794b97fa7e",
+  "project_path": "/Users/josh/Documents/Ren Projects/LLM Visibility/Collected",
+  "start_time": "2026-02-27T04:25:45.550Z",
+  "duration_minutes": 0,
+  "user_message_count": 1,
+  "assistant_message_count": 2,
+  "tool_counts": {},
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 20,
+  "output_tokens": 8,
+  "first_prompt": "I'm trying to figure out how to install this but so far no luck https://github.com/cyanluna-git/cyanluna.skills/tree/main#",
+  "user_interruptions": 0,
+  "user_response_times": [],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_task_agent": false,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    23
+  ],
+  "user_message_timestamps": [
+    "2026-02-27T04:25:46.826Z"
+  ]
+}

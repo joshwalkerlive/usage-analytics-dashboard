@@ -1,0 +1,15 @@
+{
+  "underlying_goal": "Create a /statusline skill for Claude Code that displays session metadata including session_id, transcript_path, model info, cost metrics, context window stats",
+  "goal_categories": {
+    "feature_creation": 1
+  },
+  "outcome": "unclear_from_transcript",
+  "user_satisfaction_counts": {},
+  "claude_helpfulness": "moderately_helpful",
+  "session_type": "single_task",
+  "friction_counts": {},
+  "friction_detail": "",
+  "primary_success": "multi_file_changes",
+  "brief_summary": "User asked Claude to create a /statusline skill with specific session metrics; Claude began the autopilot workflow but the session transcript cuts off before completion.",
+  "session_id": "08565723-8414-4733-a33b-ef38bbc64baf"
+}

@@ -1,0 +1,40 @@
+{
+  "session_id": "2b7ead10-650d-4a52-90ee-8db0dbb94ef0",
+  "project_path": "/",
+  "start_time": "2026-02-26T16:57:44.339Z",
+  "duration_minutes": 3,
+  "user_message_count": 1,
+  "assistant_message_count": 30,
+  "tool_counts": {
+    "Read": 1,
+    "WebFetch": 1,
+    "Bash": 7,
+    "TodoWrite": 1,
+    "TaskOutput": 2
+  },
+  "languages": {
+    "Markdown": 1
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 90,
+  "output_tokens": 218,
+  "first_prompt": "I need you to set up the GA4 MCP server for me: https://github.com/googleanalytics/google-analytics-mcp.git",
+  "user_interruptions": 0,
+  "user_response_times": [],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_task_agent": false,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": true,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    11
+  ],
+  "user_message_timestamps": [
+    "2026-02-26T16:57:46.505Z"
+  ]
+}

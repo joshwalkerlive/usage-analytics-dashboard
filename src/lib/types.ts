@@ -82,6 +82,55 @@ export interface AnalyzedSession {
   toolUsage: Record<string, { count: number; errors: number }>;
 }
 
+// New chart data types for expanded dashboard
+
+export interface LanguageStat {
+  language: string;
+  fileCount: number;
+}
+
+export interface SessionTypeStat {
+  type: string;
+  count: number;
+}
+
+export interface ResponseTimeBucket {
+  range: string;
+  count: number;
+  medianMs: number;
+}
+
+export interface TimeOfDayBucket {
+  period: string;
+  count: number;
+  hours: number[]; // raw hour values for TZ adjustment
+}
+
+export interface ToolErrorStat {
+  errorType: string;
+  count: number;
+}
+
+export interface HelpfulFactorStat {
+  factor: string;
+  count: number;
+}
+
+export interface OutcomeStat {
+  outcome: string;
+  count: number;
+}
+
+export interface FrictionTypeStat {
+  type: string;
+  count: number;
+}
+
+export interface InferredSatisfaction {
+  level: string;
+  count: number;
+}
+
 export interface DashboardData {
   sessions: AnalyzedSession[];
   sessionMetrics: SessionMetrics;
@@ -89,6 +138,16 @@ export interface DashboardData {
   goalDistribution: GoalDistribution[];
   frictionOverTime: FrictionDataPoint[];
   satisfactionDistribution: SatisfactionDataPoint[];
+  // Expanded chart data
+  languageStats: LanguageStat[];
+  sessionTypeStats: SessionTypeStat[];
+  responseTimeBuckets: ResponseTimeBucket[];
+  timeOfDayBuckets: TimeOfDayBucket[];
+  toolErrorStats: ToolErrorStat[];
+  helpfulFactorStats: HelpfulFactorStat[];
+  outcomeStats: OutcomeStat[];
+  frictionTypeStats: FrictionTypeStat[];
+  inferredSatisfaction: InferredSatisfaction[];
 }
 
 export interface DateRange {

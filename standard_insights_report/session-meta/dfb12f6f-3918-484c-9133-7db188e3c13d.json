@@ -1,0 +1,57 @@
+{
+  "session_id": "dfb12f6f-3918-484c-9133-7db188e3c13d",
+  "project_path": "/Users/josh/Notion",
+  "start_time": "2026-02-05T04:04:17.232Z",
+  "duration_minutes": 1368,
+  "user_message_count": 7,
+  "assistant_message_count": 35,
+  "tool_counts": {
+    "Bash": 12,
+    "Read": 10
+  },
+  "languages": {
+    "HTML": 1,
+    "JSON": 9
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 165,
+  "output_tokens": 345,
+  "first_prompt": "that's great and very insightful. Now I'd like you to look back further and give me /insights starting from 1/1/2026 through now",
+  "user_interruptions": 0,
+  "user_response_times": [
+    871.549,
+    57.108,
+    98.789,
+    714.151
+  ],
+  "tool_errors": 1,
+  "tool_error_categories": {
+    "File Not Found": 1
+  },
+  "uses_task_agent": false,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    23,
+    23,
+    23,
+    23,
+    23,
+    21,
+    21
+  ],
+  "user_message_timestamps": [
+    "2026-02-05T04:04:17.232Z",
+    "2026-02-05T04:04:17.232Z",
+    "2026-02-05T04:18:51.621Z",
+    "2026-02-05T04:20:40.914Z",
+    "2026-02-05T04:23:41.195Z",
+    "2026-02-06T02:37:21.232Z",
+    "2026-02-06T02:50:22.304Z"
+  ]
+}

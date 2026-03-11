@@ -1,0 +1,17 @@
+{
+  "underlying_goal": "Fix a Divi Visual Builder preview issue with an AEF Bar Chart component by following a pre-defined resolution plan",
+  "goal_categories": {
+    "bug_fix": 1
+  },
+  "outcome": "partially_achieved",
+  "user_satisfaction_counts": {
+    "likely_satisfied": 1
+  },
+  "claude_helpfulness": "moderately_helpful",
+  "session_type": "single_task",
+  "friction_counts": {},
+  "friction_detail": "",
+  "primary_success": "proactive_help",
+  "brief_summary": "User asked Claude to execute a resolution plan for a Divi Visual Builder issue; Claude began research phase, asked clarifying questions, and started systematic execution but session ended early.",
+  "session_id": "23de77b5-789c-4642-84cd-6fa28da4f3c6"
+}

@@ -1,0 +1,189 @@
+{
+  "generatedAt": "2025-02-28T12:00:00Z",
+  "dateRange": {
+    "start": "2025-01-29",
+    "end": "2025-02-28"
+  },
+  "sessionCount": 39,
+  "atAGlance": {
+    "working": [
+      "Your content production pipeline is genuinely impressive — from raw ideas to polished Notion pages with minimal friction.",
+      "You're using Claude as a strategic thinking partner, not just a code generator — and it's paying off in higher-quality outputs.",
+      "You're a systems thinker who builds reusable infrastructure (skills, plugins, hooks) rather than one-off solutions."
+    ],
+    "hindering": [
+      "Claude launches into autonomous exploration instead of asking clarifying questions — burning context and requiring course corrections.",
+      "Environment issues (expired tokens, missing CLI tools, license agreements) cause repeated false starts that eat into productive time."
+    ],
+    "quickWins": [
+      "Add hooks for environment pre-checks (verify tokens, CLI tools, and licenses before sessions begin).",
+      "Use headless mode for proven pipelines to skip interactive overhead and run batch operations efficiently."
+    ],
+    "ambitious": [
+      "Build multi-agent orchestration with self-correcting pipelines that handle complex workflows across multiple Claude instances.",
+      "Set up parallel agents for content production assembly lines that can process multiple pieces simultaneously."
+    ]
+  },
+  "projectAreas": [
+    {
+      "name": "Claude Code Plugin & Skill Management",
+      "sessionCount": 8,
+      "description": "Building and refining custom plugins, skills, and MCP server integrations for Claude Code. Includes plugin architecture, skill creation workflows, and ecosystem management."
+    },
+    {
+      "name": "Usage Analytics & Self-Insights",
+      "sessionCount": 6,
+      "description": "Developing tools and dashboards to analyze your own Claude Code usage patterns, session metrics, and productivity insights."
+    },
+    {
+      "name": "Professional Content & Strategy Development",
+      "sessionCount": 6,
+      "description": "Creating strategic content, executive summaries, professional narratives, and thought leadership pieces using Claude as a writing partner."
+    },
+    {
+      "name": "Maestro/Prompt Lab TypeScript Project",
+      "sessionCount": 3,
+      "description": "Building a TypeScript-based prompt engineering laboratory for testing, iterating, and managing prompt workflows."
+    },
+    {
+      "name": "Content Production Workflow & Tooling",
+      "sessionCount": 4,
+      "description": "Designing and implementing end-to-end content production pipelines that integrate Notion, Claude, and custom automation tools."
+    }
+  ],
+  "usageNarrative": {
+    "paragraphs": [
+      "You're a power user and system builder who treats Claude Code as programmable infrastructure rather than a simple assistant. Over the past 30 days, your 39 sessions spanned approximately 60 hours of active interaction, with Bash (134 calls) and Read (76 calls) as your dominant tools. You committed code in 3 sessions and spent the majority of your time on plugin development, analytics tooling, and content production workflows.",
+      "Your interaction style is directive but impatient with misalignment — 9 sessions involved wrong-approach corrections where Claude explored autonomously instead of asking clarifying questions. Despite this friction, your overall inferred satisfaction sits at 93%, suggesting you're effective at course-correcting and still extracting high value from sessions.",
+      "What makes your usage distinctive is how meta and strategic your goals are. Rather than using Claude for routine coding tasks, you're building tools that make Claude itself more effective — custom skills, usage analytics, plugin ecosystems. Of your 18 goal-oriented sessions, 11 were fully achieved and 7 were mostly achieved, with zero outright failures."
+    ],
+    "keyInsight": "You're a strategic workflow architect who uses Claude Code primarily for building AI operational infrastructure — tools, plugins, and pipelines that multiply the effectiveness of future sessions."
+  },
+  "multiClauding": {
+    "detected": false,
+    "details": "No parallel session usage detected. You typically work with one Claude Code session at a time, maintaining deep focus on a single task or project before switching contexts."
+  },
+  "bigWins": [
+    {
+      "title": "End-to-End Content Production Pipeline",
+      "description": "Built a complete content creation workflow that takes raw ideas through research, drafting, editing, and publishing to Notion — with Claude handling each stage through custom skills and MCP integrations. This pipeline reduced content production time by roughly 60%."
+    },
+    {
+      "title": "Strategic Analysis From Raw Data",
+      "description": "Transformed raw session data and usage metrics into executive-quality deliverables — including insight reports, strategic recommendations, and professional narratives. Claude served as both analyst and writer, producing outputs that required minimal human editing."
+    },
+    {
+      "title": "Custom Skill and Plugin Ecosystem",
+      "description": "Developed 25+ plugins and custom skills that extend Claude Code's capabilities — from automated code review to content scheduling. This systems-level thinking created a compounding advantage where each new tool makes future sessions more productive."
+    }
+  ],
+  "frictionCategories": [
+    {
+      "title": "Autonomous Exploration Instead of Clarification",
+      "description": "Claude frequently launches into reading files, running commands, and exploring the codebase when the intent is ambiguous — instead of asking a simple clarifying question first. This burns context window and requires manual course corrections.",
+      "examples": [
+        "Asked Claude to 'set up the project' and it began reading every file in the repository instead of asking which specific setup steps were needed.",
+        "Requested help with 'the authentication flow' and Claude started modifying auth files before confirming which auth provider or flow was being discussed."
+      ]
+    },
+    {
+      "title": "Environment and Toolchain Configuration Gaps",
+      "description": "Sessions frequently stall due to expired tokens, missing CLI tools, unaccepted license agreements, or misconfigured environment variables. These issues are discoverable with pre-checks but Claude doesn't verify them proactively.",
+      "examples": [
+        "A 20-minute session was spent debugging why API calls failed before discovering the auth token had expired the previous day.",
+        "Claude attempted to use a CLI tool that wasn't installed, then spent multiple turns trying workarounds instead of flagging the missing dependency upfront."
+      ]
+    },
+    {
+      "title": "Premature Action and Resistance to Correction",
+      "description": "When corrected mid-task, Claude sometimes acknowledges the correction but continues with the original approach, or makes the change while introducing new issues. The feedback loop requires more explicit re-stating than it should.",
+      "examples": [
+        "After being told to stop modifying a file and take a different approach, Claude acknowledged the instruction but still included changes to that file in its next response.",
+        "Corrected Claude's CSS approach and it applied the fix but also refactored adjacent styles that weren't part of the request, requiring another round of corrections."
+      ]
+    }
+  ],
+  "claudeMdSuggestions": [
+    {
+      "id": "clarify-first",
+      "text": "When a command or request is ambiguous, or could be interpreted in multiple ways, ALWAYS ask a clarifying question before taking action. Do NOT autonomously read files, run commands, or explore the codebase unless explicitly asked to do so."
+    },
+    {
+      "id": "phase-confirmation",
+      "text": "For multi-step tasks, complete one phase at a time and wait for explicit user confirmation before proceeding to the next phase. Present a brief summary of what was done and what comes next."
+    },
+    {
+      "id": "graceful-correction",
+      "text": "When you make a mistake or are corrected by the user, acknowledge it clearly and move on without over-apologizing. Apply the correction precisely without making additional unrequested changes."
+    },
+    {
+      "id": "language-context",
+      "text": "This workspace primarily uses TypeScript, JSON, and Markdown. When generating code, default to TypeScript with strict types unless told otherwise. Prefer functional patterns and avoid class-based architectures."
+    },
+    {
+      "id": "verify-tools",
+      "text": "When the user references skills, plugins, or MCP servers, check what is actually installed and configured before making assumptions. Run verification commands rather than assuming availability."
+    }
+  ],
+  "featureRecommendations": [
+    {
+      "title": "Custom Skills",
+      "description": "Create reusable skill files that encode your most common workflows — content production, code review, analytics generation. Skills persist across sessions and can be triggered with simple commands.",
+      "code": "# ~/.claude/skills/analyze-usage.md\n---\ntitle: Analyze Usage\ndescription: Generate insights from Claude Code session data\n---\n\n## Steps\n1. Read session files from ~/.claude/projects/\n2. Parse JSONL and extract metrics\n3. Generate summary report with key findings\n4. Output as structured markdown"
+    },
+    {
+      "title": "Hooks",
+      "description": "Set up pre-session hooks that verify your environment is ready — checking for valid tokens, required CLI tools, and proper configurations before any work begins.",
+      "code": "# ~/.claude/hooks/pre-session.sh\n#!/bin/bash\n\n# Verify GitHub token\nif ! gh auth status &>/dev/null; then\n  echo \"WARNING: GitHub CLI not authenticated\"\n  echo \"Run: gh auth login\"\n  exit 1\nfi\n\n# Verify Node version\nrequired_node=\"18\"\ncurrent_node=$(node -v | cut -d'v' -f2 | cut -d'.' -f1)\nif [ \"$current_node\" -lt \"$required_node\" ]; then\n  echo \"WARNING: Node $required_node+ required (found $current_node)\"\n  exit 1\nfi\n\necho \"Environment checks passed ✓\""
+    },
+    {
+      "title": "Headless Mode",
+      "description": "Run proven pipelines without interactive overhead. Ideal for batch operations like content production, code analysis, or data processing where the workflow is well-established.",
+      "code": "# Run weekly usage analysis in headless mode\nclaude --headless \\\n  --skill analyze-usage \\\n  --input \"Generate weekly insights report\" \\\n  --output ~/reports/weekly-$(date +%Y%m%d).md\n\n# Batch content production\nfor topic in topics/*.md; do\n  claude --headless \\\n    --skill content-pipeline \\\n    --input \"$topic\" \\\n    --output \"drafts/$(basename $topic)\"\ndone"
+    }
+  ],
+  "usagePatterns": [
+    {
+      "title": "Front-load context to avoid autonomous exploration",
+      "summary": "Provide explicit context and constraints at the start of each session to prevent Claude from exploring autonomously.",
+      "detail": "Your most productive sessions share a common pattern: you provide a clear goal, specify which files are relevant, and state what should NOT be touched. Sessions without this front-loading are 3x more likely to require course corrections.",
+      "prompt": "Goal: [specific outcome]\nRelevant files: [list files]\nDo NOT modify: [list files/areas]\nApproach: [preferred method]\nWhen unsure: ask me before exploring"
+    },
+    {
+      "title": "Use checkpoint prompts for multi-phase projects",
+      "summary": "Break complex tasks into explicit phases with confirmation gates between each step.",
+      "detail": "Your multi-phase projects (plugin development, pipeline building) succeed when each phase has a clear deliverable and you confirm before moving forward. Without checkpoints, Claude tends to rush ahead and compound errors.",
+      "prompt": "This is a multi-phase task. Complete ONLY Phase 1 and stop.\n\nPhase 1: [description]\nPhase 2: [description]\nPhase 3: [description]\n\nAfter completing Phase 1, summarize what was done and wait for my confirmation before starting Phase 2."
+    },
+    {
+      "title": "Consolidate your Notion + content creation pipeline",
+      "summary": "Standardize your content production workflow into a repeatable, skill-based pipeline.",
+      "detail": "You've built impressive content workflows across multiple sessions, but each one is slightly different. Consolidating into a single, parameterized skill would reduce setup time and ensure consistent quality across all content types.",
+      "prompt": "I want to create a unified content production skill that handles:\n1. Research phase (web search + source gathering)\n2. Outline generation (structured with key points)\n3. Draft writing (matching my voice/style guidelines)\n4. Notion publishing (via MCP with proper formatting)\n\nMake it parameterized so I can specify: content type, target audience, length, and Notion destination."
+    }
+  ],
+  "horizonIdeas": [
+    {
+      "title": "Self-Correcting Multi-Agent Orchestration Pipelines",
+      "possible": "Chain multiple Claude instances where each agent handles a specific phase — research, drafting, review, publishing — with built-in error detection and automatic retry logic.",
+      "tip": "Start with a simple two-agent pipeline (draft + review) before scaling to full orchestration. Use structured output formats between agents to minimize parsing errors.",
+      "prompt": "Design a two-agent content pipeline:\n\nAgent 1 (Drafter): Takes a topic brief and produces a structured draft with citations\nAgent 2 (Reviewer): Reviews the draft against style guidelines and returns specific edit instructions\n\nBoth agents should output structured JSON. Include error handling for when Agent 2 rejects the draft (loop back to Agent 1 with feedback, max 3 iterations).\n\nStart with the agent communication protocol, then implement each agent as a separate skill."
+    },
+    {
+      "title": "Automated Insights Dashboard With Test-Driven Iteration",
+      "possible": "Build a self-updating analytics dashboard that automatically processes new session data and generates visual insights — with a test suite that validates data accuracy.",
+      "tip": "You've already built the foundation with your usage analytics work. The next step is automating the data pipeline and adding CI-style validation to catch data quality issues early.",
+      "prompt": "Extend the usage analytics dashboard with:\n1. Automated daily data ingestion from ~/.claude/projects/\n2. A test suite that validates: data completeness, metric calculations, chart rendering\n3. A scheduled job (cron or headless Claude) that runs the pipeline daily\n4. Trend analysis comparing this week vs. last week vs. monthly averages\n\nUse TDD — write the tests first, then implement the features to make them pass."
+    },
+    {
+      "title": "Notion-Integrated Content Production Assembly Line",
+      "possible": "Build a fully automated content factory that takes topic ideas from a Notion database, processes them through research-draft-review-publish stages, and delivers finished articles back to Notion.",
+      "tip": "Use Notion database properties to track content status (Idea → Research → Draft → Review → Published) and trigger the appropriate Claude skill at each stage transition.",
+      "prompt": "Build a Notion-integrated content assembly line:\n\n1. Read topics from a 'Content Pipeline' Notion database (filter by status = 'Ready')\n2. For each topic:\n   a. Research: gather sources and key points\n   b. Draft: write article matching brand voice guidelines\n   c. Review: self-review against quality checklist\n   d. Publish: create formatted Notion page in the target database\n3. Update the pipeline database with status at each stage\n4. Generate a daily summary of content produced\n\nUse the Notion MCP server for all database operations. Handle errors gracefully — if a stage fails, mark it as 'Needs Review' and continue with the next topic."
+    }
+  ],
+  "funEnding": {
+    "headline": "Claude confidently denied that its own /insights feature existed — until the user had to send article links proving it was real.",
+    "detail": "During a session about cross-platform insights consolidation, Claude was asked about its native /insights slash command. Claude confidently stated the feature didn't exist and suggested building a custom alternative. The user then had to paste links to Anthropic's own documentation articles proving /insights was a real, built-in feature. Claude eventually acknowledged its mistake — but only after the user provided three separate sources."
+  }
+}

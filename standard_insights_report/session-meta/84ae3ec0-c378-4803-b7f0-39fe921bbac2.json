@@ -1,0 +1,30 @@
+{
+  "session_id": "84ae3ec0-c378-4803-b7f0-39fe921bbac2",
+  "project_path": "/Users/josh/_agents/agent_customizations/prompt-lab-cowork-plugin-pack",
+  "start_time": "2026-02-22T04:20:17.997Z",
+  "duration_minutes": 40,
+  "user_message_count": 12,
+  "assistant_message_count": 53,
+  "tool_counts": {
+    "Skill": 2,
+    "Bash": 4,
+    "Read": 1,
+    "WebSearch": 9,
+    "mcp__a0493cec-1061-4c2d-9026-c997bebb664f__notion-search": 1,
+    "mcp__a0493cec-1061-4c2d-9026-c997bebb664f__notion-fetch": 1,
+    "mcp__a0493cec-1061-4c2d-9026-c997bebb664f__notion-create-pages": 1
+  },
+  "languages": {
+    "Markdown": 1
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 458,
+  "output_tokens": 129,
+  "first_prompt": "install the skill from this url https://github.com/mvanhorn/last30days-skill.git",
+  "user_interruptions": 0,
+  "user_response_times": [
+    7.474,
+    111.568,
+    111.568,
+    

@@ -1,0 +1,18 @@
+{
+  "underlying_goal": "Get a comprehensive comparison of ClickUp vs Monday.com for enterprise workflow management across growth-oriented teams (BizDev, Rev Ops, Marketing/Comms, Client Support) to support an internal decision next week",
+  "goal_categories": {
+    "research_and_comparison": 1,
+    "refinement_of_analysis": 1
+  },
+  "outcome": "mostly_achieved",
+  "user_satisfaction_counts": {
+    "likely_satisfied": 1
+  },
+  "claude_helpfulness": "very_helpful",
+  "session_type": "iterative_refinement",
+  "friction_counts": {},
+  "friction_detail": "",
+  "primary_success": "fast_accurate_search",
+  "brief_summary": "User requested a detailed ClickUp vs Monday.com comparison for enterprise decision-making, then refined the analysis by excluding CRM functionality; Claude delivered structured comparisons via web research, though the session appears truncated.",
+  "session_id": "34d3375c-69e5-4606-9059-96ec61948d33"
+}

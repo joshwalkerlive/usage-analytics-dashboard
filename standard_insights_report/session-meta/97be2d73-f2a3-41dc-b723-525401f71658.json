@@ -1,0 +1,40 @@
+{
+  "session_id": "97be2d73-f2a3-41dc-b723-525401f71658",
+  "project_path": "/Users/josh/code/symphony/.claude/worktrees/youthful-nash",
+  "start_time": "2026-03-07T20:49:34.399Z",
+  "duration_minutes": 13,
+  "user_message_count": 2,
+  "assistant_message_count": 14,
+  "tool_counts": {
+    "Agent": 2,
+    "Read": 3,
+    "Write": 1
+  },
+  "languages": {
+    "Markdown": 3
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 42,
+  "output_tokens": 6463,
+  "first_prompt": "/oh-my-claudecode:code-review the folder workspace/repo I've pointed you to and gain clarity and insight into the overall concept. It's the new OpenAI Symphony framework/harness for Codex and I set it…",
+  "user_interruptions": 0,
+  "user_response_times": [],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_task_agent": true,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 368,
+  "lines_removed": 0,
+  "files_modified": 1,
+  "message_hours": [
+    15,
+    15
+  ],
+  "user_message_timestamps": [
+    "2026-03-07T20:49:35.636Z",
+    "2026-03-07T20:49:35.636Z"
+  ]
+}

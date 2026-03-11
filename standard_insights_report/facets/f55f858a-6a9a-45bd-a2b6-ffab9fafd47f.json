@@ -1,0 +1,19 @@
+{
+  "underlying_goal": "User wanted to set up or use GitHub integration, specifically through the GitHub CLI",
+  "goal_categories": {
+    "tooling_configuration": 1
+  },
+  "outcome": "partially_achieved",
+  "user_satisfaction_counts": {
+    "likely_satisfied": 1
+  },
+  "claude_helpfulness": "moderately_helpful",
+  "session_type": "quick_question",
+  "friction_counts": {
+    "misunderstood_request": 1
+  },
+  "friction_detail": "Claude initially looked for MCP resources instead of understanding user wanted to use gh CLI directly.",
+  "primary_success": "proactive_help",
+  "brief_summary": "User wanted to initiate GitHub integration via gh CLI; Claude verified gh was installed and authenticated but session ended before any actual GitHub operations were performed.",
+  "session_id": "f55f858a-6a9a-45bd-a2b6-ffab9fafd47f"
+}

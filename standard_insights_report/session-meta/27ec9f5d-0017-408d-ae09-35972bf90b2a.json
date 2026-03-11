@@ -1,0 +1,40 @@
+{
+  "session_id": "27ec9f5d-0017-408d-ae09-35972bf90b2a",
+  "project_path": "/Users/josh/Desktop/Whitepaper landing page",
+  "start_time": "2026-01-30T01:02:50.471Z",
+  "duration_minutes": 1,
+  "user_message_count": 2,
+  "assistant_message_count": 9,
+  "tool_counts": {
+    "Bash": 3,
+    "Glob": 2
+  },
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 43,
+  "output_tokens": 13,
+  "first_prompt": "how do I view our past conversations?",
+  "summary": "Locating Divi 5 Documentation Files",
+  "user_interruptions": 0,
+  "user_response_times": [
+    8.246
+  ],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_task_agent": false,
+  "uses_mcp": false,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    20,
+    20
+  ],
+  "user_message_timestamps": [
+    "2026-01-30T01:02:50.471Z",
+    "2026-01-30T01:03:20.299Z"
+  ]
+}

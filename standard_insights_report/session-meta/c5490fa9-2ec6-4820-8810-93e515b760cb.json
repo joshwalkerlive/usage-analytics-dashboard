@@ -1,0 +1,40 @@
+{
+  "session_id": "c5490fa9-2ec6-4820-8810-93e515b760cb",
+  "project_path": "/",
+  "start_time": "2026-02-23T15:26:09.297Z",
+  "duration_minutes": 6,
+  "user_message_count": 3,
+  "assistant_message_count": 27,
+  "tool_counts": {
+    "Task": 1,
+    "TaskOutput": 1,
+    "mcp__a0493cec-1061-4c2d-9026-c997bebb664f__notion-create-pages": 10
+  },
+  "languages": {},
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 81,
+  "output_tokens": 185,
+  "first_prompt": "/episode-kickoff I want to do an episode that shows people how to use AI with the tools they use every day for their job to create efficiency and automation. For the everyday workers, not the tech-fir…",
+  "user_interruptions": 0,
+  "user_response_times": [],
+  "tool_errors": 0,
+  "tool_error_categories": {},
+  "uses_task_agent": true,
+  "uses_mcp": true,
+  "uses_web_search": false,
+  "uses_web_fetch": false,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "files_modified": 0,
+  "message_hours": [
+    10,
+    10,
+    10
+  ],
+  "user_message_timestamps": [
+    "2026-02-23T15:26:11.621Z",
+    "2026-02-23T15:26:11.621Z",
+    "2026-02-23T15:31:55.640Z"
+  ]
+}

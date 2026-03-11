@@ -1,0 +1,15 @@
+{
+  "underlying_goal": "Get a comprehensive analysis of their entire Claude usage history including projects, trends, prompting patterns, sessions, and actionable recommendations for improvement",
+  "goal_categories": {
+    "data_analysis": 1
+  },
+  "outcome": "mostly_achieved",
+  "user_satisfaction_counts": {},
+  "claude_helpfulness": "very_helpful",
+  "session_type": "single_task",
+  "friction_counts": {},
+  "friction_detail": "",
+  "primary_success": "good_explanations",
+  "brief_summary": "User requested a full historical analysis of their Claude usage and Claude ran the unified-insights engine across 48 sessions producing a summary report, though the output appears truncated in the transcript.",
+  "session_id": "d9600138-14bf-4a6e-b0b4-1dbab312c620"
+}

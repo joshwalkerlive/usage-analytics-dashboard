@@ -1,0 +1,17 @@
+{
+  "underlying_goal": "Diagnose and resolve a GA4 traffic analytics drop related to CSP/CMP/Consent/Google Tag conflicts",
+  "goal_categories": {
+    "diagnosis_planning": 1
+  },
+  "outcome": "partially_achieved",
+  "user_satisfaction_counts": {
+    "likely_satisfied": 1
+  },
+  "claude_helpfulness": "moderately_helpful",
+  "session_type": "exploration",
+  "friction_counts": {},
+  "friction_detail": "",
+  "primary_success": "good_explanations",
+  "brief_summary": "User asked what information Claude needs to diagnose a GA4 traffic drop related to CSP/consent issues; Claude began providing a structured information-gathering checklist but the session was cut short.",
+  "session_id": "b91d643c-dbca-4727-b867-4b9812a77bfa"
+}

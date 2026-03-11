@@ -1,0 +1,51 @@
+{
+  "session_id": "9113e154-39b8-4817-aabd-327f97c4dc20",
+  "project_path": "/Users/josh/Documents/VS Code/Projects/GA4 Analytics App",
+  "start_time": "2026-01-23T20:23:59.316Z",
+  "duration_minutes": 12,
+  "user_message_count": 2,
+  "assistant_message_count": 109,
+  "tool_counts": {
+    "Read": 9,
+    "Task": 1,
+    "TodoWrite": 10,
+    "Bash": 15,
+    "Edit": 13,
+    "Glob": 1,
+    "Write": 11,
+    "WebSearch": 1
+  },
+  "languages": {
+    "TypeScript": 24,
+    "Markdown": 1
+  },
+  "git_commits": 0,
+  "git_pushes": 0,
+  "input_tokens": 2289,
+  "output_tokens": 228,
+  "first_prompt": "No prompt",
+  "user_interruptions": 0,
+  "user_response_times": [
+    88.467
+  ],
+  "tool_errors": 8,
+  "tool_error_categories": {
+    "Command Failed": 7,
+    "Other": 1
+  },
+  "uses_task_agent": true,
+  "uses_mcp": false,
+  "uses_web_search": true,
+  "uses_web_fetch": false,
+  "lines_added": 1204,
+  "lines_removed": 22,
+  "files_modified": 14,
+  "message_hours": [
+    15,
+    15
+  ],
+  "user_message_timestamps": [
+    "2026-01-23T20:23:59.316Z",
+    "2026-01-23T20:27:22.339Z"
+  ]
+}

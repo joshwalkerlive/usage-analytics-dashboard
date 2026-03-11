@@ -1,0 +1,15 @@
+{
+  "underlying_goal": "Set up a GitHub MCP server integration for Claude Code in the workspace",
+  "goal_categories": {
+    "setup_configuration": 2
+  },
+  "outcome": "fully_achieved",
+  "user_satisfaction_counts": {},
+  "claude_helpfulness": "very_helpful",
+  "session_type": "single_task",
+  "friction_counts": {},
+  "friction_detail": "",
+  "primary_success": "correct_code_edits",
+  "brief_summary": "User asked to set up a GitHub MCP server and Claude successfully created the configuration file with their provided token.",
+  "session_id": "4336658c-089c-4a05-8f7d-854eb6751493"
+}
