@@ -127,6 +127,23 @@ describe("FolderPicker", () => {
     });
   });
 
+  it("shows skipped count in confirmation dialog when skipped > 0", async () => {
+    mockParseFiles.mockResolvedValue({
+      sessions: allMockSessions,
+      fileCount: 3,
+      skipped: 1,
+    });
+    render(<FolderPicker onLoaded={vi.fn()} onError={vi.fn()} />);
+
+    const input = screen.getByTestId("folder-input");
+    const file = new File(['{}'], "a.json", { type: "application/json" });
+    fireEvent.change(input, { target: { files: [file] } });
+
+    await waitFor(() => {
+      expect(screen.getByText(/\(1 skipped\)/i)).toBeInTheDocument();
+    });
+  });
+
   it("calls onError when all sessions are invalid", async () => {
     const onError = vi.fn();
     mockParseFiles.mockResolvedValue({

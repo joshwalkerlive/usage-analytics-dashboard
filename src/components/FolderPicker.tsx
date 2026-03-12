@@ -9,10 +9,9 @@ export interface FolderPickerProps {
   onReplace?: () => void;
 }
 
-const supportsModernAPI =
-  typeof window !== "undefined" && "showDirectoryPicker" in window;
-
 export function FolderPicker({ onLoaded, onError, onReplace }: FolderPickerProps) {
+  const supportsModernAPI =
+    typeof window !== "undefined" && "showDirectoryPicker" in window;
   const [pending, setPending] = useState<ParseResult | null>(null);
   const [mode, setMode] = useState<"merge" | "replace">("merge");
   const [loading, setLoading] = useState(false);
