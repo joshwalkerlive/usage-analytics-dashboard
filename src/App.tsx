@@ -48,6 +48,7 @@ import { PongGame } from "@/components/PongGame";
 // Controls
 import { DateRangeFilter } from "@/components/DateRangeFilter";
 import { FileUpload } from "@/components/FileUpload";
+import { FolderPicker } from "@/components/FolderPicker";
 
 export default function App() {
   const [rawSessions, setRawSessions] = useState<RawSession[]>([]);
@@ -139,6 +140,10 @@ export default function App() {
     setError(null);
   }, []);
 
+  const handleReplace = useCallback(() => {
+    setRawSessions([]);
+  }, []);
+
   // Loading state
   if (loading) {
     return (
@@ -208,10 +213,11 @@ export default function App() {
   const filterControls = (
     <>
       <DateRangeFilter value={dateRange} onChange={setDateRange} />
-      <FileUpload
+      <FileUpload onLoaded={handleFilesLoaded} onError={handleParseError} compact />
+      <FolderPicker
         onLoaded={handleFilesLoaded}
         onError={handleParseError}
-        compact
+        onReplace={handleReplace}
       />
     </>
   );
