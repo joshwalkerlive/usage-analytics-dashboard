@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useState, useEffect } from "react";
 import type { SessionMetrics } from "@/lib/types";
 import type { InsightsReport } from "@/lib/insights-types";
 import { ThemeSelector } from "@/components/ThemeSelector";
@@ -7,7 +7,8 @@ import { useTheme } from "@/context/ThemeContext";
 interface HeaderProps {
   metrics: SessionMetrics;
   insights: InsightsReport | null;
-  controls?: ReactNode;
+  filterControls?: ReactNode;
+  actionControls?: ReactNode;
 }
 
 function hexToRgba(hex: string, alpha: number): string {
@@ -31,7 +32,7 @@ function formatDate(iso: string): string {
   }
 }
 
-export function Header({ metrics, insights, controls }: HeaderProps) {
+export function Header({ metrics, insights, filterControls, actionControls }: HeaderProps) {
   const { currentTheme } = useTheme();
   const dateRange = insights?.dateRange;
   const dateLabel = dateRange
@@ -42,17 +43,17 @@ export function Header({ metrics, insights, controls }: HeaderProps) {
 
   return (
     <header className="space-y-0">
-      {/* Sticky 3-column nav bar */}
+      {/* Sticky nav bar with conditional theme selector reveal */}
       <div
         className="sticky top-0 z-50 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-3"
         style={{
-          backgroundColor: hexToRgba(bgPrimary, 0.65),
+          backgroundColor: hexToRgba(bgPrimary, 0),
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)",
           borderBottom: "1px solid rgba(255,255,255,0.06)",
         }}
       >
-        <div className="grid grid-cols-3 items-center gap-4">
+        <div className="flex items-center justify-between gap-4">
           {/* Left: icon + title */}
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0">
@@ -76,17 +77,14 @@ export function Header({ metrics, insights, controls }: HeaderProps) {
           </div>
 
           {/* Center: theme selector */}
-          <div className="flex justify-center">
+          <div className="flex justify-center flex-1">
             <ThemeSelector />
           </div>
-
-          {/* Right: spacer (date moved below) */}
-          <div />
         </div>
       </div>
 
-      {/* Metrics left, date + controls right */}
-      <div className="flex items-center justify-between gap-4 pt-3 flex-wrap">
+      {/* Row 1: metrics left, right-side hierarchy (date label → filter controls → action controls) */}
+      <div className="flex items-start justify-between gap-4 pt-3">
         <div className="flex items-center gap-4 text-sm text-navy-300">
           <span>{metrics.totalSessions} sessions analyzed</span>
           <span className="text-navy-600">·</span>
@@ -94,13 +92,24 @@ export function Header({ metrics, insights, controls }: HeaderProps) {
           <span className="text-navy-600">·</span>
           <span>{metrics.totalToolCalls.toLocaleString()} tool calls</span>
         </div>
-        <div className="flex items-center gap-3 text-xs flex-wrap">
+
+        {/* Right side: hierarchical column (date label → filter controls → action controls) */}
+        <div className="flex flex-col items-end gap-2">
           {dateLabel && (
-            <span className="text-navy-400 whitespace-nowrap">
+            <span className="text-navy-400 text-xs whitespace-nowrap">
               {dateLabel}
             </span>
           )}
-          {controls}
+          {filterControls && (
+            <div className="flex items-center gap-3 flex-wrap justify-end">
+              {filterControls}
+            </div>
+          )}
+          {actionControls && (
+            <div className="flex items-center gap-3 flex-wrap justify-end pt-1">
+              {actionControls}
+            </div>
+          )}
         </div>
       </div>
     </header>

@@ -71,6 +71,20 @@ export function SunriseGlow() {
       phase: Math.random() * Math.PI * 2,
     }));
 
+    // --- distant bird animation ---
+    interface Bird {
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      life: number;
+      maxLife: number;
+      wingFlap: number;
+    }
+
+    let bird: Bird | null = null;
+    let lastBirdTime = Date.now();
+
     let t = 0;
 
     function draw() {
@@ -141,6 +155,54 @@ export function SunriseGlow() {
         ctx!.arc(m.x, m.y, m.r, 0, Math.PI * 2);
         ctx!.fillStyle = `rgba(245, 200, 100, ${m.opacity * flicker})`;
         ctx!.fill();
+      }
+
+      // --- distant bird animation every 90-120 seconds ---
+      const now = Date.now();
+      if (now - lastBirdTime > 90000 + Math.random() * 30000 && !bird) {
+        bird = {
+          x: -50,
+          y: h * (0.15 + Math.random() * 0.15),
+          vx: 0.8 + Math.random() * 0.4,
+          vy: (Math.random() - 0.5) * 0.2,
+          life: 0,
+          maxLife: (w + 100) / (0.8 + Math.random() * 0.4),
+          wingFlap: Math.random() * Math.PI * 2,
+        };
+        lastBirdTime = now;
+      }
+
+      if (bird) {
+        bird.life++;
+        bird.x += bird.vx;
+        bird.y += bird.vy;
+        bird.wingFlap += 0.3;
+
+        if (bird.life >= bird.maxLife) {
+          bird = null;
+        } else {
+          // Draw distant bird (small V-shape)
+          const birdSize = 8;
+          const wingFlap = Math.sin(bird.wingFlap) * 3;
+          ctx!.save();
+          ctx!.globalAlpha = 0.35;
+          ctx!.strokeStyle = "rgba(100, 100, 100, 0.5)";
+          ctx!.lineWidth = 1;
+
+          // Left wing
+          ctx!.beginPath();
+          ctx!.moveTo(bird.x, bird.y);
+          ctx!.lineTo(bird.x - birdSize + wingFlap, bird.y - birdSize * 0.5);
+          ctx!.stroke();
+
+          // Right wing
+          ctx!.beginPath();
+          ctx!.moveTo(bird.x, bird.y);
+          ctx!.lineTo(bird.x + birdSize - wingFlap, bird.y - birdSize * 0.5);
+          ctx!.stroke();
+
+          ctx!.restore();
+        }
       }
 
       animRef.current = requestAnimationFrame(draw);

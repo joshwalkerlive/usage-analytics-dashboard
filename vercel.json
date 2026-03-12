@@ -1,0 +1,6 @@
+{
+  "name": "usage-analytics-dashboard",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite"
+}

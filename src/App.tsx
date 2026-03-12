@@ -204,8 +204,8 @@ export default function App() {
 
   const { sessionMetrics } = dashboardData;
 
-  // Prepare controls element to pass to Header
-  const controls = (
+  // Prepare controls elements to pass to Header
+  const filterControls = (
     <>
       <DateRangeFilter value={dateRange} onChange={setDateRange} />
       <FileUpload
@@ -213,6 +213,10 @@ export default function App() {
         onError={handleParseError}
         compact
       />
+    </>
+  );
+  const actionControls = (
+    <>
       <button
         onClick={handleRefresh}
         className="text-xs text-navy-400 hover:text-navy-200 transition-colors"
@@ -242,7 +246,7 @@ export default function App() {
         )}
 
         {/* Module 1: Header */}
-        <Header metrics={sessionMetrics} insights={insights} controls={controls} />
+        <Header metrics={sessionMetrics} insights={insights} filterControls={filterControls} actionControls={actionControls} />
 
       {/* Module 2: At a Glance */}
       {insights && (

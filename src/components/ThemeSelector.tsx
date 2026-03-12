@@ -27,7 +27,7 @@ export function ThemeSelector() {
               ${
                 isActive
                   ? "text-white"
-                  : "text-navy-400 hover:text-white hover:bg-navy-800/50"
+                  : "text-white/70 hover:text-white hover:bg-navy-800/50"
               }
             `}
             style={
