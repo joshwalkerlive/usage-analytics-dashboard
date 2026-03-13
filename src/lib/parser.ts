@@ -1,4 +1,4 @@
-import type { RawSession } from "./types";
+import type { RawSession, ContentBlock } from "./types";
 
 export function validateRawSession(session: unknown): session is RawSession {
   if (!session || typeof session !== "object") return false;
@@ -8,6 +8,26 @@ export function validateRawSession(session: unknown): session is RawSession {
     typeof s.timestamp === "string" &&
     Array.isArray(s.messages)
   );
+}
+
+/**
+ * Normalize message content to ContentBlock[] format.
+ * Existing JSON exports may have string content — wrap those as TextBlock.
+ * Also stamps source as "json".
+ */
+function normalizeMessageContent(session: RawSession): RawSession {
+  return {
+    ...session,
+    source: "json" as const,
+    messages: session.messages.map((msg) => ({
+      ...msg,
+      content: (typeof msg.content === "string"
+        ? [{ type: "text" as const, text: msg.content }]
+        : Array.isArray(msg.content)
+          ? msg.content
+          : [{ type: "text" as const, text: String(msg.content) }]) as ContentBlock[],
+    })),
+  };
 }
 
 export function parseSessionExport(json: string): RawSession[] {
@@ -26,7 +46,7 @@ export function parseSessionExport(json: string): RawSession[] {
     if (parsed.sessions.length === 0) {
       throw new Error("No sessions found");
     }
-    return parsed.sessions;
+    return parsed.sessions.map(normalizeMessageContent);
   }
 
   // Handle array of sessions
@@ -34,12 +54,12 @@ export function parseSessionExport(json: string): RawSession[] {
     if (parsed.length === 0) {
       throw new Error("No sessions found");
     }
-    return parsed;
+    return parsed.map(normalizeMessageContent);
   }
 
   // Handle single session object
   if (typeof parsed === "object" && validateRawSession(parsed)) {
-    return [parsed];
+    return [parsed].map(normalizeMessageContent);
   }
 
   throw new Error("Unrecognized session format");

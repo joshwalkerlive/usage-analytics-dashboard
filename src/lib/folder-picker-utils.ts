@@ -1,4 +1,5 @@
 import { parseSessionExport } from "@/lib/parser";
+import { parseJsonlSession } from "@/lib/jsonl-parser";
 import type { RawSession } from "@/lib/types";
 
 export interface ParseResult {
@@ -22,8 +23,17 @@ export async function parseFiles(files: File[]): Promise<ParseResult> {
   for (const file of files) {
     try {
       const text = await readFileAsText(file);
-      const parsed = parseSessionExport(text);
-      sessions = sessions.concat(parsed);
+      if (file.name.endsWith(".jsonl")) {
+        const session = parseJsonlSession(text, file.name);
+        if (session) {
+          sessions.push(session);
+        } else {
+          skipped++;
+        }
+      } else {
+        const parsed = parseSessionExport(text);
+        sessions = sessions.concat(parsed);
+      }
     } catch {
       skipped++;
     }
@@ -31,15 +41,17 @@ export async function parseFiles(files: File[]): Promise<ParseResult> {
   return { sessions, fileCount: files.length, skipped };
 }
 
-export async function collectJsonFiles(
+export async function collectSessionFiles(
   dir: FileSystemDirectoryHandle
 ): Promise<File[]> {
   const files: File[] = [];
-  for await (const [name, handle] of dir) {
-    if (handle.kind === "file" && name.endsWith(".json")) {
+  // Use entries() which has better TypeScript support than direct iteration
+  const entries = (dir as unknown as { entries(): AsyncIterable<[string, FileSystemHandle]> }).entries();
+  for await (const [name, handle] of entries) {
+    if (handle.kind === "file" && (name.endsWith(".json") || name.endsWith(".jsonl"))) {
       files.push(await (handle as FileSystemFileHandle).getFile());
     } else if (handle.kind === "directory") {
-      files.push(...(await collectJsonFiles(handle as FileSystemDirectoryHandle)));
+      files.push(...(await collectSessionFiles(handle as FileSystemDirectoryHandle)));
     }
   }
   return files;

@@ -1,17 +1,36 @@
-// Raw session data as exported from Claude Code
-export interface RawToolCall {
-  tool: string;
-  args: Record<string, unknown>;
-  result?: string;
-  durationMs?: number;
-  error?: boolean;
+// Content block types (Anthropic API native format)
+export interface TextBlock {
+  type: "text";
+  text: string;
 }
 
+export interface ThinkingBlock {
+  type: "thinking";
+  thinking: string;
+}
+
+export interface ToolUseBlock {
+  type: "tool_use";
+  id: string;
+  name: string;
+  input: Record<string, unknown>;
+}
+
+export interface ToolResultBlock {
+  type: "tool_result";
+  tool_use_id: string;
+  content: string;
+  is_error?: boolean;
+}
+
+export type ContentBlock = TextBlock | ThinkingBlock | ToolUseBlock | ToolResultBlock;
+
+// Raw session data as exported from Claude Code
 export interface RawMessage {
   role: "user" | "assistant" | "system";
-  content: string;
-  toolCalls?: RawToolCall[];
+  content: ContentBlock[];
   timestamp: string;
+  model?: string;
 }
 
 export interface RawSession {
@@ -19,8 +38,9 @@ export interface RawSession {
   timestamp: string;
   durationMs: number;
   messages: RawMessage[];
-  model: string;
+  model?: string;
   cwd: string;
+  source?: "json" | "jsonl";
 }
 
 // Computed analytics types
