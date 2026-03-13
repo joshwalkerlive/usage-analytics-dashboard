@@ -3,48 +3,67 @@ import type { RawSession } from "../lib/types";
 export const mockRawSession: RawSession = {
   id: "session-001",
   timestamp: "2025-03-01T10:00:00Z",
-  durationMs: 300000, // 5 minutes
+  durationMs: 300000,
   model: "claude-sonnet-4-20250514",
   cwd: "/Users/test/project",
   messages: [
     {
       role: "user",
-      content: "Fix the bug in the login handler where passwords aren't hashed",
+      content: [
+        { type: "text", text: "Fix the bug in the login handler where passwords aren't hashed" },
+      ],
       timestamp: "2025-03-01T10:00:00Z",
     },
     {
       role: "assistant",
-      content: "I'll fix the password hashing bug.",
-      toolCalls: [
+      content: [
+        { type: "text", text: "I'll fix the password hashing bug." },
         {
-          tool: "Read",
-          args: { file_path: "/src/auth.ts" },
-          result: "file contents...",
-          durationMs: 50,
+          type: "tool_use",
+          id: "tu_1",
+          name: "Read",
+          input: { file_path: "/src/auth.ts" },
         },
         {
-          tool: "Edit",
-          args: { file_path: "/src/auth.ts", old_string: "a", new_string: "b" },
-          result: "success",
-          durationMs: 30,
+          type: "tool_result",
+          tool_use_id: "tu_1",
+          content: "file contents...",
+        },
+        {
+          type: "tool_use",
+          id: "tu_2",
+          name: "Edit",
+          input: { file_path: "/src/auth.ts", old_string: "a", new_string: "b" },
+        },
+        {
+          type: "tool_result",
+          tool_use_id: "tu_2",
+          content: "success",
         },
       ],
       timestamp: "2025-03-01T10:01:00Z",
     },
     {
       role: "user",
-      content: "Great, now run the tests",
+      content: [
+        { type: "text", text: "Great, now run the tests" },
+      ],
       timestamp: "2025-03-01T10:02:00Z",
     },
     {
       role: "assistant",
-      content: "Running tests...",
-      toolCalls: [
+      content: [
+        { type: "text", text: "Running tests..." },
         {
-          tool: "Bash",
-          args: { command: "npm test" },
-          result: "All tests passed",
-          durationMs: 5000,
+          type: "tool_use",
+          id: "tu_3",
+          name: "Bash",
+          input: { command: "npm test" },
+        },
+        {
+          type: "tool_result",
+          tool_use_id: "tu_3",
+          content: "All tests passed",
         },
       ],
       timestamp: "2025-03-01T10:03:00Z",
@@ -55,36 +74,53 @@ export const mockRawSession: RawSession = {
 export const mockRawSessionFeature: RawSession = {
   id: "session-002",
   timestamp: "2025-03-02T14:00:00Z",
-  durationMs: 600000, // 10 minutes
+  durationMs: 600000,
   model: "claude-sonnet-4-20250514",
   cwd: "/Users/test/project",
   messages: [
     {
       role: "user",
-      content: "Add a new feature: dark mode toggle for the settings page",
+      content: [
+        { type: "text", text: "Add a new feature: dark mode toggle for the settings page" },
+      ],
       timestamp: "2025-03-02T14:00:00Z",
     },
     {
       role: "assistant",
-      content: "I'll add dark mode support.",
-      toolCalls: [
+      content: [
+        { type: "text", text: "I'll add dark mode support." },
         {
-          tool: "Read",
-          args: { file_path: "/src/settings.tsx" },
-          result: "file contents...",
-          durationMs: 40,
+          type: "tool_use",
+          id: "tu_4",
+          name: "Read",
+          input: { file_path: "/src/settings.tsx" },
         },
         {
-          tool: "Write",
-          args: { file_path: "/src/theme.ts", content: "..." },
-          result: "success",
-          durationMs: 25,
+          type: "tool_result",
+          tool_use_id: "tu_4",
+          content: "file contents...",
         },
         {
-          tool: "Edit",
-          args: { file_path: "/src/settings.tsx", old_string: "a", new_string: "b" },
-          result: "success",
-          durationMs: 35,
+          type: "tool_use",
+          id: "tu_5",
+          name: "Write",
+          input: { file_path: "/src/theme.ts", content: "..." },
+        },
+        {
+          type: "tool_result",
+          tool_use_id: "tu_5",
+          content: "success",
+        },
+        {
+          type: "tool_use",
+          id: "tu_6",
+          name: "Edit",
+          input: { file_path: "/src/settings.tsx", old_string: "a", new_string: "b" },
+        },
+        {
+          type: "tool_result",
+          tool_use_id: "tu_6",
+          content: "success",
         },
       ],
       timestamp: "2025-03-02T14:05:00Z",
@@ -95,66 +131,103 @@ export const mockRawSessionFeature: RawSession = {
 export const mockRawSessionWithErrors: RawSession = {
   id: "session-003",
   timestamp: "2025-03-03T09:00:00Z",
-  durationMs: 900000, // 15 minutes
+  durationMs: 900000,
   model: "claude-sonnet-4-20250514",
   cwd: "/Users/test/project",
   messages: [
     {
       role: "user",
-      content: "Refactor the database module to use connection pooling",
+      content: [
+        { type: "text", text: "Refactor the database module to use connection pooling" },
+      ],
       timestamp: "2025-03-03T09:00:00Z",
     },
     {
       role: "assistant",
-      content: "I'll refactor the database module.",
-      toolCalls: [
+      content: [
+        { type: "text", text: "I'll refactor the database module." },
         {
-          tool: "Read",
-          args: { file_path: "/src/db.ts" },
-          result: "file contents...",
-          durationMs: 45,
+          type: "tool_use",
+          id: "tu_7",
+          name: "Read",
+          input: { file_path: "/src/db.ts" },
         },
         {
-          tool: "Bash",
-          args: { command: "npm install pg-pool" },
-          error: true,
-          durationMs: 8000,
+          type: "tool_result",
+          tool_use_id: "tu_7",
+          content: "file contents...",
         },
         {
-          tool: "Bash",
-          args: { command: "npm install pg-pool --legacy-peer-deps" },
-          result: "installed",
-          durationMs: 6000,
+          type: "tool_use",
+          id: "tu_8",
+          name: "Bash",
+          input: { command: "npm install pg-pool" },
         },
         {
-          tool: "Edit",
-          args: { file_path: "/src/db.ts", old_string: "a", new_string: "b" },
-          error: true,
-          durationMs: 20,
+          type: "tool_result",
+          tool_use_id: "tu_8",
+          content: "",
+          is_error: true,
         },
         {
-          tool: "Edit",
-          args: { file_path: "/src/db.ts", old_string: "c", new_string: "d" },
-          result: "success",
-          durationMs: 22,
+          type: "tool_use",
+          id: "tu_9",
+          name: "Bash",
+          input: { command: "npm install pg-pool --legacy-peer-deps" },
+        },
+        {
+          type: "tool_result",
+          tool_use_id: "tu_9",
+          content: "installed",
+        },
+        {
+          type: "tool_use",
+          id: "tu_10",
+          name: "Edit",
+          input: { file_path: "/src/db.ts", old_string: "a", new_string: "b" },
+        },
+        {
+          type: "tool_result",
+          tool_use_id: "tu_10",
+          content: "",
+          is_error: true,
+        },
+        {
+          type: "tool_use",
+          id: "tu_11",
+          name: "Edit",
+          input: { file_path: "/src/db.ts", old_string: "c", new_string: "d" },
+        },
+        {
+          type: "tool_result",
+          tool_use_id: "tu_11",
+          content: "success",
         },
       ],
       timestamp: "2025-03-03T09:10:00Z",
     },
     {
       role: "user",
-      content: "That failed, try again",
+      content: [
+        { type: "text", text: "That failed, try again" },
+      ],
       timestamp: "2025-03-03T09:11:00Z",
     },
     {
       role: "assistant",
-      content: "Let me retry.",
-      toolCalls: [
+      content: [
+        { type: "text", text: "Let me retry." },
         {
-          tool: "Bash",
-          args: { command: "npm test" },
-          error: true,
-          durationMs: 4000,
+          type: "tool_use",
+          id: "tu_12",
+          name: "Bash",
+          input: { command: "npm test" },
+        },
+        {
+          type: "tool_result",
+          tool_use_id: "tu_12",
+          content: "",
+          is_error: true,
         },
       ],
       timestamp: "2025-03-03T09:14:00Z",
@@ -165,30 +238,42 @@ export const mockRawSessionWithErrors: RawSession = {
 export const mockRawSessionExplore: RawSession = {
   id: "session-004",
   timestamp: "2025-03-05T16:00:00Z",
-  durationMs: 120000, // 2 minutes
+  durationMs: 120000,
   model: "claude-sonnet-4-20250514",
   cwd: "/Users/test/project",
   messages: [
     {
       role: "user",
-      content: "What does the auth middleware do? Explain the flow",
+      content: [
+        { type: "text", text: "What does the auth middleware do? Explain the flow" },
+      ],
       timestamp: "2025-03-05T16:00:00Z",
     },
     {
       role: "assistant",
-      content: "Let me look at the auth middleware.",
-      toolCalls: [
+      content: [
+        { type: "text", text: "Let me look at the auth middleware." },
         {
-          tool: "Read",
-          args: { file_path: "/src/middleware/auth.ts" },
-          result: "file contents...",
-          durationMs: 35,
+          type: "tool_use",
+          id: "tu_13",
+          name: "Read",
+          input: { file_path: "/src/middleware/auth.ts" },
         },
         {
-          tool: "Grep",
-          args: { pattern: "authenticate", path: "/src" },
-          result: "matches...",
-          durationMs: 100,
+          type: "tool_result",
+          tool_use_id: "tu_13",
+          content: "file contents...",
+        },
+        {
+          type: "tool_use",
+          id: "tu_14",
+          name: "Grep",
+          input: { pattern: "authenticate", path: "/src" },
+        },
+        {
+          type: "tool_result",
+          tool_use_id: "tu_14",
+          content: "matches...",
         },
       ],
       timestamp: "2025-03-05T16:01:00Z",
