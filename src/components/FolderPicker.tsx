@@ -6,7 +6,7 @@ import type { ParseResult } from "@/lib/folder-picker-utils";
 export interface FolderPickerProps {
   onLoaded: (sessions: RawSession[]) => void;
   onError: (message: string) => void;
-  onReplace?: () => void;
+  onReplace?: (sessions: RawSession[]) => void;
 }
 
 export function FolderPicker({ onLoaded, onError, onReplace }: FolderPickerProps) {
@@ -57,11 +57,14 @@ export function FolderPicker({ onLoaded, onError, onReplace }: FolderPickerProps
 
   const handleConfirm = useCallback(() => {
     if (!pending) return;
-    if (mode === "replace") onReplace?.();
     if (pending.skipped > 0) {
       onError(`Loaded ${pending.sessions.length} sessions (${pending.skipped} files skipped)`);
     }
-    onLoaded(pending.sessions);
+    if (mode === "replace") {
+      onReplace?.(pending.sessions);
+    } else {
+      onLoaded(pending.sessions);
+    }
     setPending(null);
   }, [pending, mode, onReplace, onLoaded, onError]);
 

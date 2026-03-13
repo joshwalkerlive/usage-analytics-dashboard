@@ -93,7 +93,7 @@ describe("FolderPicker", () => {
     expect(onReplace).not.toHaveBeenCalled();
   });
 
-  it("replace mode calls onReplace then onLoaded", async () => {
+  it("replace mode calls onReplace with sessions", async () => {
     const onLoaded = vi.fn();
     const onReplace = vi.fn();
     const onError = vi.fn();
@@ -111,8 +111,8 @@ describe("FolderPicker", () => {
     fireEvent.click(screen.getByDisplayValue("replace"));
     fireEvent.click(screen.getByRole("button", { name: /load sessions/i }));
 
-    expect(onReplace).toHaveBeenCalled();
-    expect(onLoaded).toHaveBeenCalledWith(allMockSessions);
+    expect(onReplace).toHaveBeenCalledWith(allMockSessions);
+    expect(onLoaded).not.toHaveBeenCalled();
   });
 
   it("calls onError when no JSON files found", async () => {

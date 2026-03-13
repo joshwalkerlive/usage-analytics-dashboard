@@ -140,8 +140,9 @@ export default function App() {
     setError(null);
   }, []);
 
-  const handleReplace = useCallback(() => {
-    setRawSessions([]);
+  const handleReplace = useCallback((sessions: RawSession[]) => {
+    setRawSessions(sessions);
+    setError(null);
   }, []);
 
   // Loading state
@@ -201,6 +202,14 @@ export default function App() {
               Drop a Claude Code session export below to get started
             </p>
             <FileUpload onLoaded={handleFilesLoaded} onError={handleParseError} />
+            <div className="flex items-center gap-3 text-navy-500 text-sm">
+              <span>or</span>
+            </div>
+            <FolderPicker
+              onLoaded={handleFilesLoaded}
+              onError={handleParseError}
+              onReplace={handleReplace}
+            />
           </div>
         </DashboardShell>
       </>
