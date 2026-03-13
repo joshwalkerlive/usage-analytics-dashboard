@@ -14,7 +14,27 @@ import type {
   OutcomeStat,
   FrictionTypeStat,
   InferredSatisfaction,
+  RawMessage,
+  ToolUseBlock,
+  ToolResultBlock,
 } from "./types";
+
+// --- Content block helpers ---
+
+function getTextContent(msg: RawMessage): string {
+  return msg.content
+    .filter((b): b is { type: "text"; text: string } => b.type === "text")
+    .map((b) => b.text)
+    .join("\n");
+}
+
+function getToolUses(msg: RawMessage): ToolUseBlock[] {
+  return msg.content.filter((b): b is ToolUseBlock => b.type === "tool_use");
+}
+
+function getToolResults(msg: RawMessage): ToolResultBlock[] {
+  return msg.content.filter((b): b is ToolResultBlock => b.type === "tool_result");
+}
 
 const GOAL_KEYWORDS: Record<GoalCategory, string[]> = {
   "bug-fix": ["fix", "bug", "error", "issue", "broken", "crash", "patch"],
@@ -30,7 +50,7 @@ const GOAL_KEYWORDS: Record<GoalCategory, string[]> = {
 function classifyGoal(messages: RawSession["messages"]): GoalCategory {
   const firstUserMessage = messages.find((m) => m.role === "user");
   if (!firstUserMessage) return "unknown";
-  const text = firstUserMessage.content.toLowerCase();
+  const text = getTextContent(firstUserMessage).toLowerCase();
 
   for (const [category, keywords] of Object.entries(GOAL_KEYWORDS)) {
     if (category === "unknown") continue;
@@ -42,11 +62,12 @@ function classifyGoal(messages: RawSession["messages"]): GoalCategory {
 }
 
 export function computeFrictionScore(session: RawSession): number {
-  const toolCalls = session.messages.flatMap((m) => m.toolCalls ?? []);
-  const totalCalls = toolCalls.length;
+  const toolUses = session.messages.flatMap((m) => getToolUses(m));
+  const totalCalls = toolUses.length;
   if (totalCalls === 0) return 0;
 
-  const errorCount = toolCalls.filter((tc) => tc.error).length;
+  const toolResults = session.messages.flatMap((m) => getToolResults(m));
+  const errorCount = toolResults.filter((r) => r.is_error).length;
   const errorRate = errorCount / totalCalls;
 
   // Base friction from error rate (0-60 points)
@@ -64,11 +85,12 @@ export function computeFrictionScore(session: RawSession): number {
 }
 
 export function computeSatisfactionScore(session: RawSession): number {
-  const toolCalls = session.messages.flatMap((m) => m.toolCalls ?? []);
-  const totalCalls = toolCalls.length;
+  const toolUses = session.messages.flatMap((m) => getToolUses(m));
+  const totalCalls = toolUses.length;
   if (totalCalls === 0) return 75; // neutral for no-tool sessions
 
-  const errorCount = toolCalls.filter((tc) => tc.error).length;
+  const toolResults = session.messages.flatMap((m) => getToolResults(m));
+  const errorCount = toolResults.filter((r) => r.is_error).length;
   const errorRate = errorCount / totalCalls;
 
   // Start at 90, subtract for errors
@@ -82,18 +104,24 @@ export function computeSatisfactionScore(session: RawSession): number {
 }
 
 export function analyzeSession(session: RawSession): AnalyzedSession {
-  const toolCalls = session.messages.flatMap((m) => m.toolCalls ?? []);
+  const allToolUses = session.messages.flatMap((m) => getToolUses(m));
+  const allToolResults = session.messages.flatMap((m) => getToolResults(m));
   const messageCount = session.messages.length;
-  const toolCallCount = toolCalls.length;
-  const toolErrorCount = toolCalls.filter((tc) => tc.error).length;
+  const toolCallCount = allToolUses.length;
+
+  // Build a set of tool_use IDs that had errors
+  const errorIds = new Set(
+    allToolResults.filter((r) => r.is_error).map((r) => r.tool_use_id)
+  );
+  const toolErrorCount = errorIds.size;
 
   const toolUsage: Record<string, { count: number; errors: number }> = {};
-  for (const tc of toolCalls) {
-    if (!toolUsage[tc.tool]) {
-      toolUsage[tc.tool] = { count: 0, errors: 0 };
+  for (const tu of allToolUses) {
+    if (!toolUsage[tu.name]) {
+      toolUsage[tu.name] = { count: 0, errors: 0 };
     }
-    toolUsage[tc.tool].count++;
-    if (tc.error) toolUsage[tc.tool].errors++;
+    toolUsage[tu.name].count++;
+    if (errorIds.has(tu.id)) toolUsage[tu.name].errors++;
   }
 
   const date = session.timestamp.slice(0, 10);
@@ -108,7 +136,7 @@ export function analyzeSession(session: RawSession): AnalyzedSession {
     goalCategory: classifyGoal(session.messages),
     frictionScore: computeFrictionScore(session),
     satisfactionScore: computeSatisfactionScore(session),
-    model: session.model,
+    model: session.model ?? "unknown",
     toolUsage,
   };
 }
@@ -215,11 +243,12 @@ export function computeLanguageStats(sessions: AnalyzedSession[], rawSessions: R
 
   for (const raw of rawSessions) {
     for (const msg of raw.messages) {
-      if (!msg.toolCalls) continue;
-      for (const tc of msg.toolCalls) {
-        // Extract file paths from tool args
-        const args = tc.args as Record<string, unknown>;
-        const filePath = (args.file_path ?? args.path ?? args.command ?? "") as string;
+      const toolUses = getToolUses(msg);
+      if (toolUses.length === 0) continue;
+      for (const tu of toolUses) {
+        // Extract file paths from tool input
+        const input = tu.input as Record<string, unknown>;
+        const filePath = (input.file_path ?? input.path ?? input.command ?? "") as string;
         const ext = filePath.split(".").pop()?.toLowerCase() ?? "";
         const lang = EXTENSION_LANGUAGE_MAP[ext];
         if (lang) {
@@ -327,10 +356,13 @@ export function computeToolErrorStats(sessions: AnalyzedSession[], rawSessions: 
 
   for (const raw of rawSessions) {
     for (const msg of raw.messages) {
-      if (!msg.toolCalls) continue;
-      for (const tc of msg.toolCalls) {
-        if (!tc.error) continue;
-        const tool = tc.tool.toLowerCase();
+      const toolUses = getToolUses(msg);
+      const toolResults = getToolResults(msg);
+      // Build map from tool_use_id -> tool name
+      const nameById = new Map(toolUses.map((tu) => [tu.id, tu.name]));
+      for (const tr of toolResults) {
+        if (!tr.is_error) continue;
+        const tool = (nameById.get(tr.tool_use_id) ?? "unknown").toLowerCase();
         let errorType: string;
         if (tool.includes("bash") || tool.includes("command")) {
           errorType = "Command Failed";
