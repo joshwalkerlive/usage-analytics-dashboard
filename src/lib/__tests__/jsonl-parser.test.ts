@@ -147,7 +147,9 @@ describe("parseJsonlSession", () => {
       },
     ];
     const result = parseJsonlSession(makeSession(lines))!;
-    const toolResult = result.messages[1].content[0];
+    const content = result.messages[1].content;
+    expect(Array.isArray(content)).toBe(true);
+    const toolResult = (content as Array<{ type: string; is_error?: boolean }>)[0];
     expect(toolResult.type).toBe("tool_result");
     if (toolResult.type === "tool_result") {
       expect(toolResult.is_error).toBe(true);

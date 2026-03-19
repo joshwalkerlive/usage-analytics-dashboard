@@ -67,7 +67,8 @@ export function OnTheHorizon({ insights }: OnTheHorizonProps) {
   if (!ideas || ideas.length === 0) return null;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {ideas.map((idea, index) => (
         <div
           key={index}
@@ -99,6 +100,7 @@ export function OnTheHorizon({ insights }: OnTheHorizonProps) {
           </div>
         </div>
       ))}
+      </div>
     </div>
   );
 }

@@ -13,6 +13,7 @@ import {
   computeOutcomeStats,
   computeFrictionTypeStats,
   computeInferredSatisfaction,
+  computeDailyMetrics,
 } from "./metrics";
 import { filterByDateRange } from "./filters";
 
@@ -55,6 +56,7 @@ export function buildDashboardData(
   const outcomeStats = computeOutcomeStats(sessions);
   const frictionTypeStats = computeFrictionTypeStats(sessions);
   const inferredSatisfaction = computeInferredSatisfaction(sessions);
+  const dailyMetrics = computeDailyMetrics(sessions);
 
   return {
     sessions,
@@ -63,6 +65,7 @@ export function buildDashboardData(
     goalDistribution,
     frictionOverTime,
     satisfactionDistribution,
+    dailyMetrics,
     languageStats,
     sessionTypeStats,
     responseTimeBuckets,

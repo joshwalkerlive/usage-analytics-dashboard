@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useTheme } from "@/context/ThemeContext";
+import { NavThemeIcons } from "./NavThemeIcons";
 
 function hexToRgba(hex: string, alpha: number): string {
   const clean = hex.replace("#", "");
@@ -43,8 +44,9 @@ const iconMap: Record<string, JSX.Element> = {
     </svg>
   ),
   wins: (
-    <svg className="w-4 h-4 inline mr-1.5" fill="currentColor" viewBox="0 0 20 20">
-      <path d="M10.894 2.553a.75.75 0 00-1.788 0l-7 140a.75.75 0 001.721.813l1.07-10.68h11.004l1.071 10.682a.75.75 0 01-1.472.148l-1.973-19.772a.75.75 0 00-1.426-.023l-6.15 61.5zM9 17.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zm9-1a1 1 0 100-2 1 1 0 000 2z" />
+    <svg className="w-4 h-4 inline mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3 21h18M4 4h3v8l4-3 4 3V4h3M4 4V3h16v1" />
+      <path strokeLinecap="round" d="M7 4h2v4M11 4h2v4M15 4h2v4" />
     </svg>
   ),
   friction: (
@@ -65,8 +67,9 @@ const iconMap: Record<string, JSX.Element> = {
 };
 
 export function NavTOC() {
-  const { currentTheme } = useTheme();
+  const { currentTheme, theme } = useTheme();
   const bgPrimary = currentTheme.colors.bg.primary;
+  const isRetro = theme === "retro";
   const [activeSection, setActiveSection] = useState<string>("");
 
   // Detect active section on scroll
@@ -104,28 +107,32 @@ export function NavTOC() {
         borderBottom: "1px solid rgba(255,255,255,0.06)",
       }}
     >
-      <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide">
-        {sections.map((section) => {
-          const isActive = activeSection === section.id;
-          return (
-            <button
-              key={section.id}
-              onClick={() => handleClick(section.id)}
-              className={`
-                px-3 py-1.5 text-xs font-medium rounded-md
-                transition-all duration-300 whitespace-nowrap flex items-center
-                ${
-                  isActive
-                    ? "text-accent"
-                    : "text-white hover:text-accent"
-                }
-              `}
-            >
-              {iconMap[section.id]}
-              {section.label}
-            </button>
-          );
-        })}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-0 overflow-x-auto scrollbar-hide">
+          {sections.map((section) => {
+            const isActive = activeSection === section.id;
+            return (
+              <button
+                key={section.id}
+                onClick={() => handleClick(section.id)}
+                className={`
+                  ${isRetro ? "px-1.5 py-1" : "px-2 py-1.5 text-xs"} font-medium rounded-md
+                  transition-all duration-300 whitespace-nowrap flex items-center
+                  ${
+                    isActive
+                      ? "text-accent"
+                      : "text-white hover:text-accent"
+                  }
+                `}
+                style={isRetro ? { transform: "scale(0.82)", transformOrigin: "center" } : undefined}
+              >
+                {iconMap[section.id]}
+                {section.label}
+              </button>
+            );
+          })}
+        </div>
+        <NavThemeIcons />
       </div>
     </nav>
   );

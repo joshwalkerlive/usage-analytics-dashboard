@@ -20,7 +20,8 @@ export function UsagePatterns({ insights }: UsagePatternsProps) {
   if (!patterns || patterns.length === 0) return null;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {patterns.map((pattern, index) => (
         <PatternCard
           key={index}
@@ -28,6 +29,7 @@ export function UsagePatterns({ insights }: UsagePatternsProps) {
           accent={PATTERN_ACCENTS[index % PATTERN_ACCENTS.length]}
         />
       ))}
+      </div>
     </div>
   );
 }

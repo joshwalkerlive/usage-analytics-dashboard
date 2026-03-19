@@ -14,6 +14,7 @@ import type {
   OutcomeStat,
   FrictionTypeStat,
   InferredSatisfaction,
+  DailyMetric,
   RawMessage,
   ToolUseBlock,
   ToolResultBlock,
@@ -21,19 +22,57 @@ import type {
 
 // --- Content block helpers ---
 
+/** Normalize content to ContentBlock[] — handles string content from the API */
+function contentBlocks(msg: RawMessage) {
+  if (typeof msg.content === "string") return [{ type: "text" as const, text: msg.content }];
+  if (Array.isArray(msg.content)) return msg.content;
+  return [{ type: "text" as const, text: String(msg.content) }];
+}
+
 function getTextContent(msg: RawMessage): string {
-  return msg.content
+  return contentBlocks(msg)
     .filter((b): b is { type: "text"; text: string } => b.type === "text")
     .map((b) => b.text)
     .join("\n");
 }
 
 function getToolUses(msg: RawMessage): ToolUseBlock[] {
-  return msg.content.filter((b): b is ToolUseBlock => b.type === "tool_use");
+  // First try native ContentBlock format
+  const blocks = contentBlocks(msg).filter((b): b is ToolUseBlock => b.type === "tool_use");
+  if (blocks.length > 0) return blocks;
+
+  // Fallback: server JSONL parser puts tool info in toolCalls property
+  if (msg.toolCalls && msg.toolCalls.length > 0) {
+    return msg.toolCalls.map((tc, i) => ({
+      type: "tool_use" as const,
+      id: `tc-${i}`,
+      name: tc.tool,
+      input: tc.args ?? {},
+    }));
+  }
+
+  return [];
 }
 
 function getToolResults(msg: RawMessage): ToolResultBlock[] {
-  return msg.content.filter((b): b is ToolResultBlock => b.type === "tool_result");
+  // First try native ContentBlock format
+  const blocks = contentBlocks(msg).filter((b): b is ToolResultBlock => b.type === "tool_result");
+  if (blocks.length > 0) return blocks;
+
+  // Fallback: server JSONL parser embeds error info in toolCalls on the
+  // preceding assistant message.  The next user message carries the results.
+  // To correlate, we look at the toolCalls on this message (if present) and
+  // synthesize tool_result blocks for any that have error: true.
+  if (msg.toolCalls && msg.toolCalls.length > 0) {
+    return msg.toolCalls.map((tc, i) => ({
+      type: "tool_result" as const,
+      tool_use_id: `tc-${i}`,
+      content: "",
+      is_error: tc.error === true,
+    }));
+  }
+
+  return [];
 }
 
 const GOAL_KEYWORDS: Record<GoalCategory, string[]> = {
@@ -475,4 +514,42 @@ export function computeInferredSatisfaction(sessions: AnalyzedSession[]): Inferr
   return Object.entries(levels)
     .map(([level, count]) => ({ level, count }))
     .filter((item) => item.count > 0);
+}
+
+export function computeDailyMetrics(sessions: AnalyzedSession[]): DailyMetric[] {
+  const byDay = new Map<
+    string,
+    { sessions: number; messages: number; toolCalls: number; toolErrors: number; frictionSum: number; satisfactionSum: number }
+  >();
+
+  for (const s of sessions) {
+    const day = s.date;
+    const existing = byDay.get(day) ?? {
+      sessions: 0,
+      messages: 0,
+      toolCalls: 0,
+      toolErrors: 0,
+      frictionSum: 0,
+      satisfactionSum: 0,
+    };
+    existing.sessions++;
+    existing.messages += s.messageCount;
+    existing.toolCalls += s.toolCallCount;
+    existing.toolErrors += s.toolErrorCount;
+    existing.frictionSum += s.frictionScore;
+    existing.satisfactionSum += s.satisfactionScore;
+    byDay.set(day, existing);
+  }
+
+  return Array.from(byDay.entries())
+    .map(([date, d]) => ({
+      date,
+      sessions: d.sessions,
+      messages: d.messages,
+      toolCalls: d.toolCalls,
+      toolErrors: d.toolErrors,
+      avgFriction: Math.round(d.frictionSum / d.sessions),
+      avgSatisfaction: Math.round(d.satisfactionSum / d.sessions),
+    }))
+    .sort((a, b) => a.date.localeCompare(b.date));
 }

@@ -257,7 +257,7 @@ const THEMES: Record<ThemeType, Theme> = {
 };
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<ThemeType>("retro");
+  const [theme, setTheme] = useState<ThemeType>("morning");
 
   const currentTheme = THEMES[theme];
   const availableThemes = Object.values(THEMES);

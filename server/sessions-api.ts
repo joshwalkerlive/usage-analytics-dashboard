@@ -9,6 +9,14 @@ import path from "node:path";
 import os from "node:os";
 
 const CLAUDE_PROJECTS_DIR = path.join(os.homedir(), ".claude", "projects");
+const CLAUDE_DESKTOP_DIR = path.join(
+  os.homedir(),
+  "Library",
+  "Application Support",
+  "Claude"
+);
+const COWORK_SESSIONS_DIR = path.join(CLAUDE_DESKTOP_DIR, "local-agent-mode-sessions");
+const DESKTOP_CC_SESSIONS_DIR = path.join(CLAUDE_DESKTOP_DIR, "claude-code-sessions");
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 
 /**
@@ -218,6 +226,126 @@ function parseJsonlToSession(content: string, filename: string) {
   };
 }
 
+/**
+ * Find Desktop session metadata JSON files (local_*.json) in a directory.
+ * Scans 2-3 levels deep (account/org/session structure).
+ */
+function findDesktopSessionFiles(dir: string, cutoffTime: number): string[] {
+  const results: string[] = [];
+  if (!fs.existsSync(dir)) return results;
+
+  try {
+    // Walk up to 3 levels to find local_*.json files
+    const walk = (d: string, depth: number) => {
+      if (depth > 3) return;
+      let entries: fs.Dirent[];
+      try {
+        entries = fs.readdirSync(d, { withFileTypes: true });
+      } catch {
+        return;
+      }
+      for (const entry of entries) {
+        const fullPath = path.join(d, entry.name);
+        if (entry.isDirectory()) {
+          if (entry.name === "skills-plugin" || entry.name === ".claude") continue;
+          walk(fullPath, depth + 1);
+        } else if (entry.name.startsWith("local_") && entry.name.endsWith(".json")) {
+          try {
+            const stat = fs.statSync(fullPath);
+            if (stat.mtimeMs >= cutoffTime) {
+              results.push(fullPath);
+            }
+          } catch { /* skip */ }
+        }
+      }
+    };
+    walk(dir, 0);
+  } catch { /* skip */ }
+
+  return results;
+}
+
+/**
+ * Parse a Desktop/Cowork session metadata JSON file into a RawSession-like object.
+ */
+function parseDesktopMetaToSession(
+  filePath: string,
+  source: "desktop" | "cowork"
+) {
+  const raw = fs.readFileSync(filePath, "utf-8");
+  const meta = JSON.parse(raw);
+
+  const sessionId = meta.sessionId || path.basename(filePath, ".json");
+  const createdAt = meta.createdAt as number | undefined;
+  const lastActivityAt = meta.lastActivityAt as number | undefined;
+
+  if (!createdAt) return null;
+
+  const timestamp = new Date(createdAt).toISOString();
+  const durationMs = lastActivityAt ? Math.max(0, lastActivityAt - createdAt) : 0;
+  const model = (meta.model as string) || "unknown";
+
+  // For cwd: Cowork uses userSelectedFolders, Desktop uses cwd
+  let cwd = (meta.cwd as string) || "";
+  if (source === "cowork" && Array.isArray(meta.userSelectedFolders) && meta.userSelectedFolders.length > 0) {
+    cwd = meta.userSelectedFolders[0] as string;
+  }
+
+  // Build a minimal message from initialMessage or title
+  const initialMessage = (meta.initialMessage as string) || (meta.title as string) || "";
+  const messages: {
+    role: string;
+    content: string;
+    timestamp: string;
+  }[] = [];
+
+  if (initialMessage) {
+    messages.push({
+      role: "user",
+      content: initialMessage,
+      timestamp,
+    });
+  }
+
+  // Try to find and parse a nested JSONL transcript for richer data
+  const sessionDir = path.dirname(filePath);
+  const nestedJsonl = findJsonlFiles(sessionDir, 0);
+  if (nestedJsonl.length > 0) {
+    // Use the first (usually only) non-subagent JSONL
+    const mainJsonl = nestedJsonl.find((f) => !f.includes("subagents"));
+    if (mainJsonl) {
+      try {
+        const content = fs.readFileSync(mainJsonl, "utf-8");
+        const parsed = parseJsonlToSession(content, path.basename(mainJsonl));
+        if (parsed && parsed.messages.length > 0) {
+          // Return the full parsed session with metadata enrichment
+          return {
+            ...parsed,
+            id: sessionId,
+            timestamp,
+            durationMs: parsed.durationMs || durationMs,
+            model: parsed.model !== "unknown" ? parsed.model : model,
+            cwd: parsed.cwd || cwd,
+            source,
+          };
+        }
+      } catch { /* fall through to metadata-only */ }
+    }
+  }
+
+  if (messages.length === 0) return null;
+
+  return {
+    id: sessionId,
+    timestamp,
+    durationMs,
+    messages,
+    model,
+    cwd,
+    source,
+  };
+}
+
 export function sessionsApiPlugin(): Plugin {
   return {
     name: "sessions-api",
@@ -228,15 +356,46 @@ export function sessionsApiPlugin(): Plugin {
         const cutoffTime = Date.now() - THIRTY_DAYS_MS;
 
         try {
-          const files = findJsonlFiles(CLAUDE_PROJECTS_DIR, cutoffTime);
+          const seenIds = new Set<string>();
           const sessions: unknown[] = [];
 
-          for (const filePath of files) {
+          // 1. Claude Code CLI sessions (JSONL from ~/.claude/projects/)
+          const cliFiles = findJsonlFiles(CLAUDE_PROJECTS_DIR, cutoffTime);
+          for (const filePath of cliFiles) {
             try {
               const content = fs.readFileSync(filePath, "utf-8");
               const filename = path.basename(filePath);
               const session = parseJsonlToSession(content, filename);
               if (session) {
+                seenIds.add(session.id);
+                sessions.push({ ...session, source: "cli" });
+              }
+            } catch {
+              // Skip unreadable files
+            }
+          }
+
+          // 2. Desktop Claude Code sessions
+          const desktopFiles = findDesktopSessionFiles(DESKTOP_CC_SESSIONS_DIR, cutoffTime);
+          for (const filePath of desktopFiles) {
+            try {
+              const session = parseDesktopMetaToSession(filePath, "desktop");
+              if (session && !seenIds.has(session.id)) {
+                seenIds.add(session.id);
+                sessions.push(session);
+              }
+            } catch {
+              // Skip unreadable files
+            }
+          }
+
+          // 3. Cowork sessions
+          const coworkFiles = findDesktopSessionFiles(COWORK_SESSIONS_DIR, cutoffTime);
+          for (const filePath of coworkFiles) {
+            try {
+              const session = parseDesktopMetaToSession(filePath, "cowork");
+              if (session && !seenIds.has(session.id)) {
+                seenIds.add(session.id);
                 sessions.push(session);
               }
             } catch {

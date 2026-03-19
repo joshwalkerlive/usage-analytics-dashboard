@@ -1,14 +1,13 @@
-import { ReactNode, useState, useEffect } from "react";
 import type { SessionMetrics } from "@/lib/types";
 import type { InsightsReport } from "@/lib/insights-types";
-import { ThemeSelector } from "@/components/ThemeSelector";
 import { useTheme } from "@/context/ThemeContext";
 
 interface HeaderProps {
   metrics: SessionMetrics;
   insights: InsightsReport | null;
-  filterControls?: ReactNode;
-  actionControls?: ReactNode;
+  dateRange?: { start: string; end: string } | null;
+  onRefresh?: () => void;
+  onClear?: () => void;
 }
 
 function hexToRgba(hex: string, alpha: number): string {
@@ -32,18 +31,24 @@ function formatDate(iso: string): string {
   }
 }
 
-export function Header({ metrics, insights, filterControls, actionControls }: HeaderProps) {
+export function Header({ metrics, insights, dateRange, onRefresh, onClear }: HeaderProps) {
   const { currentTheme } = useTheme();
-  const dateRange = insights?.dateRange;
   const dateLabel = dateRange
     ? `${formatDate(dateRange.start)} – ${formatDate(dateRange.end)}`
     : null;
 
   const bgPrimary = currentTheme.colors.bg.primary;
+  const accent = currentTheme.colors.accent;
+
+  const statPills = [
+    { label: "Sessions", value: metrics.totalSessions.toLocaleString(), color: "#818cf8" },
+    { label: "Messages", value: metrics.totalMessages.toLocaleString(), color: "#34d399" },
+    { label: "Tool Calls", value: metrics.totalToolCalls.toLocaleString(), color: "#fbbf24" },
+  ];
 
   return (
     <header className="space-y-0">
-      {/* Sticky nav bar with conditional theme selector reveal */}
+      {/* Sticky header bar */}
       <div
         className="sticky top-0 z-50 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-3"
         style={{
@@ -72,43 +77,52 @@ export function Header({ metrics, insights, filterControls, actionControls }: He
               </svg>
             </div>
             <h1 className="text-xl font-bold text-white tracking-tight leading-tight">
-              Claude Code Usage Report
+              Claude Insights Cockpit
             </h1>
           </div>
 
-          {/* Center: theme selector */}
-          <div className="flex justify-center flex-1">
-            <ThemeSelector />
+          {/* Right: stat pills */}
+          <div className="flex items-center gap-2">
+            {statPills.map((pill) => (
+              <div
+                key={pill.label}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs"
+                style={{
+                  backgroundColor: hexToRgba(pill.color, 0.12),
+                  border: `1px solid ${hexToRgba(pill.color, 0.25)}`,
+                }}
+              >
+                <span style={{ color: hexToRgba(pill.color, 0.7) }} className="font-medium">{pill.label}</span>
+                <span className="text-white font-bold">{pill.value}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Row 1: metrics left, right-side hierarchy (date label → filter controls → action controls) */}
-      <div className="flex items-start justify-between gap-4 pt-3">
-        <div className="flex items-center gap-4 text-sm text-navy-300">
-          <span>{metrics.totalSessions} sessions analyzed</span>
-          <span className="text-navy-600">·</span>
-          <span>{metrics.totalMessages.toLocaleString()} messages</span>
-          <span className="text-navy-600">·</span>
-          <span>{metrics.totalToolCalls.toLocaleString()} tool calls</span>
-        </div>
-
-        {/* Right side: hierarchical column (date label → filter controls → action controls) */}
-        <div className="flex flex-col items-end gap-2">
-          {dateLabel && (
-            <span className="text-navy-400 text-xs whitespace-nowrap">
-              {dateLabel}
-            </span>
+      {/* Row 2: date range + actions */}
+      <div className="flex items-center justify-end gap-4 pt-3">
+        {dateLabel && (
+          <span className="text-navy-400 text-xs whitespace-nowrap">
+            {dateLabel}
+          </span>
+        )}
+        <div className="flex items-center gap-3">
+          {onRefresh && (
+            <button
+              onClick={onRefresh}
+              className="text-xs text-navy-400 hover:text-navy-200 transition-colors"
+            >
+              Refresh
+            </button>
           )}
-          {filterControls && (
-            <div className="flex items-center gap-3 flex-wrap justify-end">
-              {filterControls}
-            </div>
-          )}
-          {actionControls && (
-            <div className="flex items-center gap-3 flex-wrap justify-end pt-1">
-              {actionControls}
-            </div>
+          {onClear && (
+            <button
+              onClick={onClear}
+              className="text-xs text-navy-400 hover:text-navy-200 transition-colors"
+            >
+              Clear
+            </button>
           )}
         </div>
       </div>

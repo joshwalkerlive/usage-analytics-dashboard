@@ -1,5 +1,5 @@
-import { useState, useCallback, useEffect, ReactNode } from "react";
-import type { RawSession, DateRange, DashboardData } from "@/lib/types";
+import { useState, useCallback, useEffect, useMemo } from "react";
+import type { RawSession, DashboardData } from "@/lib/types";
 import type { InsightsReport } from "@/lib/insights-types";
 import { buildDashboardData } from "@/lib/dashboard-data";
 import { fetchInsights } from "@/lib/insights-loader";
@@ -20,6 +20,7 @@ import { MetricsWithSparklines } from "@/components/MetricsWithSparklines";
 import { ProjectAreas } from "@/components/ProjectAreas";
 
 // Charts
+import { ActivityDashboard } from "@/components/ActivityDashboard";
 import { WantedChart } from "@/components/WantedChart";
 import { TopToolsChart } from "@/components/TopToolsChart";
 import { LanguagesChart } from "@/components/LanguagesChart";
@@ -33,6 +34,7 @@ import { FrictionTypesChart } from "@/components/FrictionTypesChart";
 import { InferredSatisfactionChart } from "@/components/InferredSatisfactionChart";
 
 // Narrative & qualitative
+import { HighlightReel } from "@/components/HighlightReel";
 import { UsageNarrative } from "@/components/UsageNarrative";
 import { MultiClauding } from "@/components/MultiClauding";
 import { BigWins } from "@/components/BigWins";
@@ -44,18 +46,11 @@ import { UsagePatterns } from "@/components/UsagePatterns";
 import { OnTheHorizon } from "@/components/OnTheHorizon";
 import { FunEnding } from "@/components/FunEnding";
 import { PongGame } from "@/components/PongGame";
+import { PacManGame } from "@/components/PacManGame";
 
-// Controls
-import { DateRangeFilter } from "@/components/DateRangeFilter";
-import { FileUpload } from "@/components/FileUpload";
-import { FolderPicker } from "@/components/FolderPicker";
 
 export default function App() {
   const [rawSessions, setRawSessions] = useState<RawSession[]>([]);
-  const [dateRange, setDateRange] = useState<DateRange>({
-    start: null,
-    end: null,
-  });
   const [insights, setInsights] = useState<InsightsReport | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -68,7 +63,9 @@ export default function App() {
       try {
         const [sessionsRes, insightsData] = await Promise.all([
           fetch("/api/sessions").then((r) =>
-            r.ok ? r.json() : Promise.reject(new Error(`Sessions: ${r.status}`))
+            r.ok
+              ? r.json()
+              : Promise.reject(new Error(`Sessions: ${r.status}`))
           ),
           fetchInsights(),
         ]);
@@ -82,7 +79,7 @@ export default function App() {
         }
       } catch (err) {
         if (!cancelled) {
-          console.warn("Auto-fetch failed, falling back to manual upload:", err);
+          console.warn("Auto-fetch failed:", err);
         }
       } finally {
         if (!cancelled) {
@@ -98,50 +95,57 @@ export default function App() {
   }, []);
 
   const dashboardData: DashboardData | null =
-    rawSessions.length > 0 ? buildDashboardData(rawSessions, dateRange) : null;
+    rawSessions.length > 0 ? buildDashboardData(rawSessions) : null;
 
-  const handleFilesLoaded = useCallback((sessions: RawSession[]) => {
-    setRawSessions((prev) => [...prev, ...sessions]);
-    setError(null);
-  }, []);
-
-  const handleParseError = useCallback((msg: string) => {
-    setError(msg);
-  }, []);
+  // Compute date range from actual loaded sessions
+  const sessionDateRange = useMemo(() => {
+    if (rawSessions.length === 0) return null;
+    let min = rawSessions[0].timestamp;
+    let max = rawSessions[0].timestamp;
+    for (const s of rawSessions) {
+      if (s.timestamp < min) min = s.timestamp;
+      if (s.timestamp > max) max = s.timestamp;
+    }
+    return { start: min.slice(0, 10), end: max.slice(0, 10) };
+  }, [rawSessions]);
 
   const handleRefresh = useCallback(async () => {
     setLoading(true);
+    setError(null);
+    let cancelled = false;
     try {
       const [sessionsRes, insightsData] = await Promise.all([
         fetch("/api/sessions").then((r) =>
-          r.ok ? r.json() : Promise.reject(new Error(`Sessions: ${r.status}`))
+          r.ok
+            ? r.json()
+            : Promise.reject(new Error(`Sessions: ${r.status}`))
         ),
         fetchInsights(),
       ]);
-      if (Array.isArray(sessionsRes.sessions)) {
-        setRawSessions(sessionsRes.sessions);
+      if (!cancelled) {
+        if (Array.isArray(sessionsRes.sessions)) {
+          setRawSessions(sessionsRes.sessions);
+        }
+        if (insightsData) {
+          setInsights(insightsData);
+        }
       }
-      if (insightsData) {
-        setInsights(insightsData);
-      }
-      setError(null);
     } catch (err) {
-      setError(
-        `Refresh failed: ${err instanceof Error ? err.message : String(err)}`
-      );
+      if (!cancelled) {
+        setError(
+          `Refresh failed: ${err instanceof Error ? err.message : String(err)}`
+        );
+      }
     } finally {
-      setLoading(false);
+      if (!cancelled) {
+        setLoading(false);
+      }
     }
   }, []);
 
   const handleClear = useCallback(() => {
     setRawSessions([]);
-    setDateRange({ start: null, end: null });
-    setError(null);
-  }, []);
-
-  const handleReplace = useCallback((sessions: RawSession[]) => {
-    setRawSessions(sessions);
+    setInsights(null);
     setError(null);
   }, []);
 
@@ -199,17 +203,14 @@ export default function App() {
               No sessions found in the last 30 days
             </p>
             <p className="text-navy-500 text-sm">
-              Drop a Claude Code session export below to get started
+              No session data available. Try refreshing to scan for sessions.
             </p>
-            <FileUpload onLoaded={handleFilesLoaded} onError={handleParseError} />
-            <div className="flex items-center gap-3 text-navy-500 text-sm">
-              <span>or</span>
-            </div>
-            <FolderPicker
-              onLoaded={handleFilesLoaded}
-              onError={handleParseError}
-              onReplace={handleReplace}
-            />
+            <button
+              onClick={handleRefresh}
+              className="text-sm bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg px-4 py-2 transition-colors"
+            >
+              Refresh
+            </button>
           </div>
         </DashboardShell>
       </>
@@ -217,35 +218,6 @@ export default function App() {
   }
 
   const { sessionMetrics } = dashboardData;
-
-  // Prepare controls elements to pass to Header
-  const filterControls = (
-    <>
-      <DateRangeFilter value={dateRange} onChange={setDateRange} />
-      <FileUpload onLoaded={handleFilesLoaded} onError={handleParseError} compact />
-      <FolderPicker
-        onLoaded={handleFilesLoaded}
-        onError={handleParseError}
-        onReplace={handleReplace}
-      />
-    </>
-  );
-  const actionControls = (
-    <>
-      <button
-        onClick={handleRefresh}
-        className="text-xs text-navy-400 hover:text-navy-200 transition-colors"
-      >
-        Refresh
-      </button>
-      <button
-        onClick={handleClear}
-        className="text-xs text-navy-400 hover:text-navy-200 transition-colors"
-      >
-        Clear
-      </button>
-    </>
-  );
 
   return (
     <>
@@ -261,7 +233,7 @@ export default function App() {
         )}
 
         {/* Module 1: Header */}
-        <Header metrics={sessionMetrics} insights={insights} filterControls={filterControls} actionControls={actionControls} />
+        <Header metrics={sessionMetrics} insights={insights} dateRange={sessionDateRange} onRefresh={handleRefresh} onClear={handleClear} />
 
       {/* Module 2: At a Glance */}
       {insights && (
@@ -270,6 +242,15 @@ export default function App() {
           <AtAGlance insights={insights} />
         </section>
       )}
+
+      {/* Module 2b: Moments of Discovery */}
+      <section>
+        <SectionHeading
+          title="Moments of Discovery"
+          intro="Sessions where Claude made a real difference."
+        />
+        <HighlightReel />
+      </section>
 
       {/* Module 3: Navigation */}
       <NavTOC />
@@ -283,16 +264,14 @@ export default function App() {
         <MetricsWithSparklines metrics={sessionMetrics} />
       </section>
 
-      {/* Module 5: Project Areas */}
-      {insights && (
-        <section>
-          <SectionHeading
-            title="Project Areas"
-            intro="Where you've been spending your time."
-          />
-          <ProjectAreas insights={insights} />
-        </section>
-      )}
+      {/* Module 4b: Activity Dashboard (combined timeline + heatmap) */}
+      <section>
+        <SectionHeading
+          title="Usage Over Time"
+          intro="Daily activity trends and heatmap across your sessions."
+        />
+        <ActivityDashboard data={dashboardData.dailyMetrics} />
+      </section>
 
       {/* Modules 6-7: Charts */}
       <section id="charts">
@@ -320,6 +299,17 @@ export default function App() {
             intro="A narrative view of how you've been using Claude Code."
           />
           <UsageNarrative insights={insights} />
+        </section>
+      )}
+
+      {/* Module 8b: Project Areas */}
+      {insights && (
+        <section>
+          <SectionHeading
+            title="Project Areas"
+            intro="Where you've been spending your time."
+          />
+          <ProjectAreas insights={insights} />
         </section>
       )}
 
@@ -431,8 +421,11 @@ export default function App() {
       {/* Module 20: Fun Ending */}
       {insights && <FunEnding insights={insights} />}
 
-      {/* Module 21: Retro Pong (retro theme only) */}
-      <PongGame />
+      {/* Module 21: Retro Games (retro theme only) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <PongGame />
+        <PacManGame />
+      </div>
       </DashboardShell>
     </>
   );

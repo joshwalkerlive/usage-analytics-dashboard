@@ -7,16 +7,17 @@ interface AtAGlanceProps {
 
 interface QuadrantProps {
   title: string;
+  tooltip?: string;
   items: string[];
   accent: string;
   icon: React.ReactNode;
 }
 
-function Quadrant({ title, items, accent, icon }: QuadrantProps) {
+function Quadrant({ title, tooltip, items, accent, icon }: QuadrantProps) {
   if (items.length === 0) return null;
 
   return (
-    <div className="bg-navy-900/50 border border-navy-700/50 rounded-xl p-5">
+    <div className="bg-navy-900/50 border border-navy-700/50 rounded-xl p-5" title={tooltip}>
       <div className="flex items-center gap-2 mb-3">
         <div className={`w-6 h-6 rounded-md flex items-center justify-center ${accent}`}>
           {icon}
@@ -45,6 +46,7 @@ export function AtAGlance({ insights }: AtAGlanceProps) {
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Quadrant
           title={isRetro ? "ACTIVE BOOSTS" : "What's Working"}
+          tooltip="Patterns and behaviors that are delivering value in your Claude usage."
           items={atAGlance.working}
           accent="bg-emerald-500/20 text-emerald-400"
           icon={
@@ -55,6 +57,7 @@ export function AtAGlance({ insights }: AtAGlanceProps) {
         />
         <Quadrant
           title={isRetro ? "OBSTACLES" : "What's Hindering"}
+          tooltip="Friction patterns and issues that reduce productivity or cause wasted effort."
           items={atAGlance.hindering}
           accent="bg-rose-500/20 text-rose-400"
           icon={
@@ -65,6 +68,7 @@ export function AtAGlance({ insights }: AtAGlanceProps) {
         />
         <Quadrant
           title={isRetro ? "POWER UPS" : "Quick Wins"}
+          tooltip="Low-effort changes that can immediately improve your Claude experience."
           items={atAGlance.quickWins}
           accent="bg-amber-500/20 text-amber-400"
           icon={
@@ -75,6 +79,7 @@ export function AtAGlance({ insights }: AtAGlanceProps) {
         />
         <Quadrant
           title={isRetro ? "SIDE QUESTS" : "Ambitious Goals"}
+          tooltip="High-effort investments that could transform your workflow."
           items={atAGlance.ambitious}
           accent="bg-violet-500/20 text-violet-400"
           icon={

@@ -74,36 +74,41 @@ export function MetricsWithSparklines({ metrics }: { metrics: SessionMetrics }) 
     })
   );
 
-  const stats: StatCardData[] = [
+  const stats: (StatCardData & { tooltip: string })[] = [
     {
       label: "Sessions",
       value: metrics.totalSessions.toLocaleString(),
       sub: `over ${days} day${days !== 1 ? "s" : ""}`,
       trend: "up",
       sparklineData: sessionsSparkline,
+      tooltip: `Total Claude sessions across CLI, Desktop, and Cowork. ${metrics.totalSessions} sessions over ${days} active days.`,
     },
     {
       label: "Messages",
       value: metrics.totalMessages.toLocaleString(),
       trend: "up",
       sparklineData: messagesSparkline,
+      tooltip: `Total user + assistant messages exchanged. Avg ${days > 0 ? Math.round(metrics.totalMessages / days) : 0} messages per active day.`,
     },
     {
       label: "Tool Calls",
       value: metrics.totalToolCalls.toLocaleString(),
       trend: "up",
       sparklineData: toolCallsSparkline,
+      tooltip: `Tools invoked by Claude (Bash, Read, Write, Edit, Grep, etc). ${metrics.totalToolCalls > 0 && metrics.totalSessions > 0 ? Math.round(metrics.totalToolCalls / metrics.totalSessions) : 0} avg per session.`,
     },
     {
       label: "Avg Duration",
       value: `${avgDurationMin}m`,
       sub: "per session",
       trend: "neutral",
+      tooltip: `Average session duration from first to last message timestamp. Long-idle sessions may inflate this.`,
     },
     {
       label: "Sessions / Day",
       value: sessionsPerDay,
       trend: sessionsPerDay > "2.5" ? "up" : "neutral",
+      tooltip: `Average sessions per active day. ${sessionsPerDay} sessions/day over ${days} days with at least one session.`,
     },
   ];
 
@@ -112,7 +117,8 @@ export function MetricsWithSparklines({ metrics }: { metrics: SessionMetrics }) 
       {stats.map((stat, idx) => (
         <div
           key={stat.label}
-          className="bg-navy-900/50 border border-navy-700/50 rounded-xl px-5 py-4 flex flex-col"
+          title={stat.tooltip}
+          className="bg-navy-900/50 border border-navy-700/50 rounded-xl px-5 py-4 flex flex-col cursor-default"
         >
           <p className="text-xs font-medium text-navy-400 uppercase tracking-wide">
             {stat.label}

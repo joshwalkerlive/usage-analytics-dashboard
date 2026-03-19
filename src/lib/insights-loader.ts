@@ -24,7 +24,7 @@ export async function fetchInsights(): Promise<InsightsReport | null> {
 }
 
 /**
- * Parse an InsightsReport from a raw JSON string (e.g. from file upload).
+ * Parse an InsightsReport from a raw JSON string.
  * Returns null if the JSON is invalid or doesn't match the expected shape.
  */
 export function parseInsightsJson(raw: string): InsightsReport | null {

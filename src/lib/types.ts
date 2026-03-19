@@ -28,9 +28,15 @@ export type ContentBlock = TextBlock | ThinkingBlock | ToolUseBlock | ToolResult
 // Raw session data as exported from Claude Code
 export interface RawMessage {
   role: "user" | "assistant" | "system";
-  content: ContentBlock[];
+  content: ContentBlock[] | string;
   timestamp: string;
   model?: string;
+  // Server JSONL parser emits tool info in this format
+  toolCalls?: {
+    tool: string;
+    args: Record<string, unknown>;
+    error?: boolean;
+  }[];
 }
 
 export interface RawSession {
@@ -158,6 +164,7 @@ export interface DashboardData {
   goalDistribution: GoalDistribution[];
   frictionOverTime: FrictionDataPoint[];
   satisfactionDistribution: SatisfactionDataPoint[];
+  dailyMetrics: DailyMetric[];
   // Expanded chart data
   languageStats: LanguageStat[];
   sessionTypeStats: SessionTypeStat[];
@@ -168,6 +175,16 @@ export interface DashboardData {
   outcomeStats: OutcomeStat[];
   frictionTypeStats: FrictionTypeStat[];
   inferredSatisfaction: InferredSatisfaction[];
+}
+
+export interface DailyMetric {
+  date: string;
+  sessions: number;
+  messages: number;
+  toolCalls: number;
+  toolErrors: number;
+  avgFriction: number;
+  avgSatisfaction: number;
 }
 
 export interface DateRange {
