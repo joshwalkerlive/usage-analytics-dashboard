@@ -25,6 +25,17 @@ const SUCCESS_LABELS: Record<string, string> = {
   good_debugging: "Effective Debugging",
 };
 
+const BADGE_COLORS: Record<string, { border: string; bg: string; text: string }> = {
+  "Clear Explanations": { border: "#60a5fa", bg: "rgba(96,165,250,0.12)", text: "#93bbfd" },
+  "Multi-File Build": { border: "#f59e0b", bg: "rgba(245,158,11,0.12)", text: "#fbbf24" },
+  "Precise Code Edits": { border: "#34d399", bg: "rgba(52,211,153,0.12)", text: "#6ee7b7" },
+  "Fast Research": { border: "#a78bfa", bg: "rgba(167,139,250,0.12)", text: "#c4b5fd" },
+  "Proactive Assistance": { border: "#f472b6", bg: "rgba(244,114,182,0.12)", text: "#f9a8d4" },
+  "Effective Debugging": { border: "#fb923c", bg: "rgba(251,146,60,0.12)", text: "#fdba74" },
+  Essential: { border: "#fbbf24", bg: "rgba(251,191,36,0.12)", text: "#fcd34d" },
+  "Very Helpful": { border: "#34d399", bg: "rgba(52,211,153,0.12)", text: "#6ee7b7" },
+};
+
 const CATEGORY_ALL = "All";
 
 export function HighlightReel() {
@@ -124,12 +135,16 @@ export function HighlightReel() {
   const successLabel = SUCCESS_LABELS[h.success] || h.success;
   const accent = currentTheme.colors.accent;
 
+  const helpfulnessLabel = h.helpfulness === "essential" ? "Essential" : "Very Helpful";
+  const successBadge = BADGE_COLORS[successLabel] || { border: "#6b7280", bg: "rgba(107,114,128,0.12)", text: "#9ca3af" };
+  const helpfulBadge = BADGE_COLORS[helpfulnessLabel] || { border: "#6b7280", bg: "rgba(107,114,128,0.12)", text: "#9ca3af" };
+
   return (
     <div
       className="bg-navy-900/50 border border-navy-700/50 rounded-xl p-8 relative overflow-hidden"
       style={{
         boxShadow: `0 0 20px ${accent}15, 0 0 40px ${accent}08`,
-        minHeight: 200,
+        height: 280,
       }}
     >
       {/* Subtle gradient accent line */}
@@ -140,7 +155,7 @@ export function HighlightReel() {
         }}
       />
 
-      <div className="flex items-start gap-4">
+      <div className="flex items-start gap-4 h-full">
         {/* Icon */}
         <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center flex-shrink-0 mt-0.5">
           <svg
@@ -159,22 +174,92 @@ export function HighlightReel() {
         </div>
 
         {/* Content */}
-        <div
-          className={`flex-1 min-w-0 transition-opacity duration-300 ${
-            isTransitioning ? "opacity-0" : "opacity-100"
-          }`}
-        >
-          <p className="text-base text-navy-100 font-medium leading-relaxed mb-3">
-            {h.goal}
-          </p>
-          <p className="text-sm text-navy-300 leading-relaxed">{h.summary}</p>
-          <div className="flex items-center gap-3 mt-3">
-            <span className="text-[10px] text-navy-400 bg-navy-800/60 rounded-full px-2.5 py-0.5">
-              {successLabel}
-            </span>
-            <span className="text-[10px] text-amber-400">
-              {h.helpfulness === "essential" ? "Essential" : "Very Helpful"}
-            </span>
+        <div className="flex-1 min-w-0 flex flex-col h-full">
+          <div
+            className={`flex-1 transition-opacity duration-300 ${
+              isTransitioning ? "opacity-0" : "opacity-100"
+            }`}
+          >
+            {/* Title line with badges at the end */}
+            <div className="flex items-start gap-2 mb-3 flex-wrap">
+              <p className="text-base text-navy-100 font-medium leading-relaxed flex-1 min-w-0">
+                {h.goal}
+              </p>
+              <div className="flex items-center gap-1.5 flex-shrink-0 mt-0.5">
+                <span
+                  className="text-[11px] font-medium rounded-full px-2.5 py-0.5"
+                  style={{
+                    color: successBadge.text,
+                    backgroundColor: successBadge.bg,
+                    border: `1px solid ${successBadge.border}`,
+                  }}
+                >
+                  {successLabel}
+                </span>
+                <span
+                  className="text-[11px] font-medium rounded-full px-2.5 py-0.5"
+                  style={{
+                    color: helpfulBadge.text,
+                    backgroundColor: helpfulBadge.bg,
+                    border: `1px solid ${helpfulBadge.border}`,
+                  }}
+                >
+                  {helpfulnessLabel}
+                </span>
+              </div>
+            </div>
+            <p className="text-sm text-navy-300 leading-relaxed">{h.summary}</p>
+          </div>
+
+          {/* Bottom area: centered breadcrumbs, then centered pills */}
+          <div className="mt-auto pt-4 space-y-3">
+            {/* Breadcrumb dots — centered */}
+            {highlights.length > 1 && (
+              <div className="flex items-center justify-center gap-1.5">
+                {highlights.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      setIsTransitioning(true);
+                      setTimeout(() => {
+                        setCurrentIndex(i);
+                        setIsTransitioning(false);
+                      }, 300);
+                    }}
+                    className="transition-all duration-200"
+                    style={{
+                      width: i === currentIndex ? 16 : 6,
+                      height: 6,
+                      borderRadius: 3,
+                      backgroundColor:
+                        i === currentIndex
+                          ? accent
+                          : "rgba(255,255,255,0.15)",
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Category filter pills — centered */}
+            <div className="flex items-center justify-center gap-1.5 flex-wrap">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`
+                    px-2 py-0.5 text-[9px] rounded-full transition-all duration-200
+                    ${
+                      activeCategory === cat
+                        ? "text-white bg-white/10 border border-white/20"
+                        : "text-navy-500 hover:text-navy-300 border border-transparent"
+                    }
+                  `}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -199,59 +284,6 @@ export function HighlightReel() {
             </button>
           </div>
         )}
-      </div>
-
-      {/* Bottom row: progress dots left, category filters right */}
-      <div className="flex items-center justify-between mt-4">
-        {/* Progress dots */}
-        {highlights.length > 1 ? (
-          <div className="flex items-center gap-1.5">
-            {highlights.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => {
-                  setIsTransitioning(true);
-                  setTimeout(() => {
-                    setCurrentIndex(i);
-                    setIsTransitioning(false);
-                  }, 300);
-                }}
-                className="transition-all duration-200"
-                style={{
-                  width: i === currentIndex ? 16 : 6,
-                  height: 6,
-                  borderRadius: 3,
-                  backgroundColor:
-                    i === currentIndex
-                      ? accent
-                      : "rgba(255,255,255,0.15)",
-                }}
-              />
-            ))}
-          </div>
-        ) : (
-          <div />
-        )}
-
-        {/* Category filters */}
-        <div className="flex items-center gap-1.5 flex-wrap justify-end">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`
-                px-2 py-0.5 text-[9px] rounded-full transition-all duration-200
-                ${
-                  activeCategory === cat
-                    ? "text-white bg-white/10 border border-white/20"
-                    : "text-navy-500 hover:text-navy-300 border border-transparent"
-                }
-              `}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
       </div>
     </div>
   );

@@ -261,7 +261,7 @@ export default function App() {
           title="Key Metrics"
           intro="High-level numbers from your Claude Code sessions."
         />
-        <MetricsWithSparklines metrics={sessionMetrics} />
+        <MetricsWithSparklines metrics={sessionMetrics} dailyMetrics={dashboardData.dailyMetrics} />
       </section>
 
       {/* Module 4b: Activity Dashboard (combined timeline + heatmap) */}

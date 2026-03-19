@@ -157,19 +157,19 @@ export function NightSky() {
         {
           centerX: canvas.width * 0.3,
           centerY: canvas.height * 0.2,
-          color1: "rgba(100, 220, 180, 0.35)",
+          color1: "rgba(100, 220, 180, 0.18)",
           color2: "rgba(100, 220, 180, 0)",
         },
         {
           centerX: canvas.width * 0.7,
           centerY: canvas.height * 0.25,
-          color1: "rgba(150, 180, 220, 0.35)",
+          color1: "rgba(150, 180, 220, 0.18)",
           color2: "rgba(150, 180, 220, 0)",
         },
         {
           centerX: canvas.width * 0.5,
           centerY: canvas.height * 0.3,
-          color1: "rgba(200, 150, 220, 0.30)",
+          color1: "rgba(200, 150, 220, 0.15)",
           color2: "rgba(200, 150, 220, 0)",
         },
       ];
@@ -347,7 +347,7 @@ export function NightSky() {
         inset: 0,
         pointerEvents: "none",
         zIndex: 1,
-        opacity: 0.85,
+        opacity: 0.65,
       }}
     />
   );

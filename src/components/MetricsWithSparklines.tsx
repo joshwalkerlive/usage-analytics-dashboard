@@ -1,4 +1,4 @@
-import type { SessionMetrics } from "@/lib/types";
+import type { SessionMetrics, DailyMetric } from "@/lib/types";
 import { useTheme } from "@/context/ThemeContext";
 import { LineChart, Line, ResponsiveContainer } from "recharts";
 
@@ -45,7 +45,7 @@ function getTrendIcon(trend?: "up" | "down" | "neutral") {
   }
 }
 
-export function MetricsWithSparklines({ metrics }: { metrics: SessionMetrics }) {
+export function MetricsWithSparklines({ metrics, dailyMetrics }: { metrics: SessionMetrics; dailyMetrics?: DailyMetric[] }) {
   const { currentTheme } = useTheme();
 
   const avgDurationMin = Math.round(metrics.avgDurationMs / 60_000);
@@ -53,26 +53,20 @@ export function MetricsWithSparklines({ metrics }: { metrics: SessionMetrics }) 
   const sessionsPerDay =
     days > 0 ? (metrics.totalSessions / days).toFixed(1) : "0";
 
-  // Generate sparkline data from sessionsPerDay
-  const sessionsSparkline = Object.entries(metrics.sessionsPerDay)
-    .sort(([dateA], [dateB]) => dateA.localeCompare(dateB))
-    .map(([, count]) => ({
-      value: count,
-    }));
+  // Derive sparkline data from real daily metrics
+  const sorted = dailyMetrics
+    ? [...dailyMetrics].sort((a, b) => a.date.localeCompare(b.date))
+    : [];
 
-  const messagesSparkline = Array.from(
-    { length: Math.min(14, days) },
-    (_, i) => ({
-      value: Math.floor(metrics.totalMessages / days / Math.random()) || 0,
-    })
-  );
+  const sessionsSparkline = sorted.length > 0
+    ? sorted.map((d) => ({ value: d.sessions }))
+    : Object.entries(metrics.sessionsPerDay)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([, count]) => ({ value: count }));
 
-  const toolCallsSparkline = Array.from(
-    { length: Math.min(14, days) },
-    (_, i) => ({
-      value: Math.floor(metrics.totalToolCalls / days / Math.random()) || 0,
-    })
-  );
+  const messagesSparkline = sorted.map((d) => ({ value: d.messages }));
+
+  const toolCallsSparkline = sorted.map((d) => ({ value: d.toolCalls }));
 
   const stats: (StatCardData & { tooltip: string })[] = [
     {

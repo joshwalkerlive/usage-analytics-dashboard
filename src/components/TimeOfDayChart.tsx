@@ -70,7 +70,7 @@ const BAR_COLORS: Record<string, string> = {
 
 export function TimeOfDayChart({ data }: TimeOfDayChartProps) {
   const { currentTheme } = useTheme();
-  const [tzIndex, setTzIndex] = useState(0);
+  const [tzIndex, setTzIndex] = useState(3); // Default to EST
 
   const chartData = useMemo(() => {
     if (tzIndex === 0) {

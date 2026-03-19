@@ -124,7 +124,7 @@ export function NavTOC() {
                       : "text-white hover:text-accent"
                   }
                 `}
-                style={isRetro ? { transform: "scale(0.82)", transformOrigin: "center" } : undefined}
+                style={isRetro ? { transform: "scale(0.88)", transformOrigin: "center" } : undefined}
               >
                 {iconMap[section.id]}
                 {section.label}

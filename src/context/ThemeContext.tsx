@@ -148,12 +148,12 @@ const THEMES: Record<ThemeType, Theme> = {
     timeRange: "5pm - 9pm",
     description: "Warm, calming transition theme. Reduced blue light for evening comfort while maintaining focus.",
     colors: {
-      navy: "#1a1625",
+      navy: "#140f1e",
       accent: "#f97316",
       bg: {
-        primary: "#16131f",
-        secondary: "#1f1a2e",
-        tertiary: "#2a233d",
+        primary: "#0f0c17",
+        secondary: "#181326",
+        tertiary: "#221b34",
       },
       text: {
         primary: "#f0e7ff",
@@ -168,7 +168,7 @@ const THEMES: Record<ThemeType, Theme> = {
         400: "#6e699e",
         600: "#413d6e",
         700: "#322f57",
-        900: "#1c1a41",
+        900: "#15122e",
       },
       chartPrimary: "#f97316",
       chartSecondary: "#fb923c",

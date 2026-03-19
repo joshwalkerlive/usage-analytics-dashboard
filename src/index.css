@@ -151,11 +151,11 @@ html[data-theme="retro"] input:focus {
 
 /* ─── Retro nav sizing — must come after @tailwind utilities ────────────── */
 html[data-theme="retro"] nav button {
-  font-size: 9px !important;
+  font-size: 10px !important;
   line-height: 1.5 !important;
 }
 html[data-theme="retro"] nav button svg {
-  width: 12px !important;
-  height: 12px !important;
+  width: 13px !important;
+  height: 13px !important;
   margin-right: 3px !important;
 }
