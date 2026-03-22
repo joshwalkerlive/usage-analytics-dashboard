@@ -48,16 +48,31 @@ import { FunEnding } from "@/components/FunEnding";
 import { PongGame } from "@/components/PongGame";
 import { PacManGame } from "@/components/PacManGame";
 
+// Upload-first data flow
+import { UploadZone } from "@/components/UploadZone";
+import {
+  mapPayloadToDashboardData,
+  mapPayloadToInsightsReport,
+} from "@/lib/payload-mapper";
+import type { AnalyticsPayloadV2 } from "@/types/payload-v2";
+
 
 export default function App() {
   const [rawSessions, setRawSessions] = useState<RawSession[]>([]);
   const [insights, setInsights] = useState<InsightsReport | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  // Auto-fetch sessions + insights on mount
+  // Payload-driven state (for uploaded files)
+  const [uploadedPayload, setUploadedPayload] =
+    useState<AnalyticsPayloadV2 | null>(null);
+
+  // In dev mode, auto-fetch from local API (backward compatible)
   useEffect(() => {
+    if (!import.meta.env.DEV) return;
+
     let cancelled = false;
+    setLoading(true);
 
     async function loadData() {
       try {
@@ -79,7 +94,7 @@ export default function App() {
         }
       } catch (err) {
         if (!cancelled) {
-          console.warn("Auto-fetch failed:", err);
+          console.warn("Dev auto-fetch failed (expected in production):", err);
         }
       } finally {
         if (!cancelled) {
@@ -94,11 +109,46 @@ export default function App() {
     };
   }, []);
 
-  const dashboardData: DashboardData | null =
-    rawSessions.length > 0 ? buildDashboardData(rawSessions) : null;
+  // Handle payload upload
+  const handlePayloadLoaded = useCallback(
+    (payload: AnalyticsPayloadV2) => {
+      setUploadedPayload(payload);
+      // Clear any raw session data to use payload data instead
+      setRawSessions([]);
+      setInsights(null);
+    },
+    []
+  );
 
-  // Compute date range from actual loaded sessions
+  // Handle "load different file" — reset to upload state
+  const handleReset = useCallback(() => {
+    setUploadedPayload(null);
+    setRawSessions([]);
+    setInsights(null);
+    setError(null);
+  }, []);
+
+  // Compute dashboard data from whichever source is active
+  const dashboardData: DashboardData | null = useMemo(() => {
+    if (uploadedPayload) {
+      return mapPayloadToDashboardData(uploadedPayload);
+    }
+    return rawSessions.length > 0 ? buildDashboardData(rawSessions) : null;
+  }, [uploadedPayload, rawSessions]);
+
+  // Compute insights from whichever source is active
+  const activeInsights: InsightsReport | null = useMemo(() => {
+    if (uploadedPayload) {
+      return mapPayloadToInsightsReport(uploadedPayload);
+    }
+    return insights;
+  }, [uploadedPayload, insights]);
+
+  // Compute date range
   const sessionDateRange = useMemo(() => {
+    if (uploadedPayload) {
+      return uploadedPayload.dateRange;
+    }
     if (rawSessions.length === 0) return null;
     let min = rawSessions[0].timestamp;
     let max = rawSessions[0].timestamp;
@@ -107,12 +157,12 @@ export default function App() {
       if (s.timestamp > max) max = s.timestamp;
     }
     return { start: min.slice(0, 10), end: max.slice(0, 10) };
-  }, [rawSessions]);
+  }, [uploadedPayload, rawSessions]);
 
+  // Dev-only refresh from local API
   const handleRefresh = useCallback(async () => {
     setLoading(true);
     setError(null);
-    let cancelled = false;
     try {
       const [sessionsRes, insightsData] = await Promise.all([
         fetch("/api/sessions").then((r) =>
@@ -122,24 +172,18 @@ export default function App() {
         ),
         fetchInsights(),
       ]);
-      if (!cancelled) {
-        if (Array.isArray(sessionsRes.sessions)) {
-          setRawSessions(sessionsRes.sessions);
-        }
-        if (insightsData) {
-          setInsights(insightsData);
-        }
+      if (Array.isArray(sessionsRes.sessions)) {
+        setRawSessions(sessionsRes.sessions);
+      }
+      if (insightsData) {
+        setInsights(insightsData);
       }
     } catch (err) {
-      if (!cancelled) {
-        setError(
-          `Refresh failed: ${err instanceof Error ? err.message : String(err)}`
-        );
-      }
+      setError(
+        `Refresh failed: ${err instanceof Error ? err.message : String(err)}`
+      );
     } finally {
-      if (!cancelled) {
-        setLoading(false);
-      }
+      setLoading(false);
     }
   }, []);
 
@@ -170,51 +214,9 @@ export default function App() {
     );
   }
 
-  // Empty state — no sessions loaded
+  // No data loaded — show UploadZone (production) or empty state
   if (!dashboardData) {
-    return (
-      <>
-        <NightSky />
-        <SunriseGlow />
-        <RetroEffects />
-        <DashboardShell>
-          <div className="flex flex-col items-center justify-center py-24 space-y-6">
-            {error && (
-              <div className="bg-red-900/30 border border-red-700 rounded-lg px-4 py-3 text-sm text-red-300 max-w-md">
-                {error}
-              </div>
-            )}
-            <div className="w-12 h-12 rounded-xl bg-navy-800 flex items-center justify-center">
-              <svg
-                className="w-6 h-6 text-navy-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={1.5}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
-                />
-              </svg>
-            </div>
-            <p className="text-navy-300 text-base">
-              No sessions found in the last 30 days
-            </p>
-            <p className="text-navy-500 text-sm">
-              No session data available. Try refreshing to scan for sessions.
-            </p>
-            <button
-              onClick={handleRefresh}
-              className="text-sm bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg px-4 py-2 transition-colors"
-            >
-              Refresh
-            </button>
-          </div>
-        </DashboardShell>
-      </>
-    );
+    return <UploadZone onPayloadLoaded={handlePayloadLoaded} />;
   }
 
   const { sessionMetrics } = dashboardData;
@@ -232,14 +234,26 @@ export default function App() {
           </div>
         )}
 
+        {/* Load different file button (when payload is loaded) */}
+        {uploadedPayload && (
+          <div className="flex justify-end">
+            <button
+              onClick={handleReset}
+              className="text-sm opacity-60 hover:opacity-100 transition-opacity"
+            >
+              Load different file
+            </button>
+          </div>
+        )}
+
         {/* Module 1: Header */}
-        <Header metrics={sessionMetrics} insights={insights} dateRange={sessionDateRange} onRefresh={handleRefresh} onClear={handleClear} />
+        <Header metrics={sessionMetrics} insights={activeInsights} dateRange={sessionDateRange} onRefresh={import.meta.env.DEV ? handleRefresh : undefined} onClear={handleClear} />
 
       {/* Module 2: At a Glance */}
-      {insights && (
+      {activeInsights && (
         <section id="at-a-glance">
           <SectionHeading title="At a Glance" />
-          <AtAGlance insights={insights} />
+          <AtAGlance insights={activeInsights} />
         </section>
       )}
 
@@ -292,24 +306,24 @@ export default function App() {
       </section>
 
       {/* Module 8: Usage Narrative */}
-      {insights && (
+      {activeInsights && (
         <section id="usage">
           <SectionHeading
             title="Usage Story"
             intro="A narrative view of how you've been using Claude Code."
           />
-          <UsageNarrative insights={insights} />
+          <UsageNarrative insights={activeInsights} />
         </section>
       )}
 
       {/* Module 8b: Project Areas */}
-      {insights && (
+      {activeInsights && (
         <section>
           <SectionHeading
             title="Project Areas"
             intro="Where you've been spending your time."
           />
-          <ProjectAreas insights={insights} />
+          <ProjectAreas insights={activeInsights} />
         </section>
       )}
 
@@ -323,7 +337,7 @@ export default function App() {
       </section>
 
       {/* Module 10: Multi-Clauding */}
-      {insights && <MultiClauding insights={insights} />}
+      {activeInsights && <MultiClauding insights={activeInsights} />}
 
       {/* Module 11: Time of Day + Tool Errors */}
       <section>
@@ -338,13 +352,13 @@ export default function App() {
       </section>
 
       {/* Module 12: Big Wins */}
-      {insights && (
+      {activeInsights && (
         <section id="wins">
           <SectionHeading
             title="Big Wins"
             intro="Notable accomplishments from your sessions."
           />
-          <BigWins insights={insights} />
+          <BigWins insights={activeInsights} />
         </section>
       )}
 
@@ -361,13 +375,13 @@ export default function App() {
       </section>
 
       {/* Module 14: Friction Deep Dive */}
-      {insights && (
+      {activeInsights && (
         <section id="friction">
           <SectionHeading
             title="Friction Points"
             intro="Where things got stuck and what caused it."
           />
-          <FrictionDeep insights={insights} />
+          <FrictionDeep insights={activeInsights} />
         </section>
       )}
 
@@ -386,40 +400,40 @@ export default function App() {
       </section>
 
       {/* Modules 16-17: Feature Suggestions */}
-      {insights && (
+      {activeInsights && (
         <section id="recommendations">
           <SectionHeading
             title="Recommendations"
             intro="CLAUDE.md improvements and feature suggestions."
           />
-          <FeatureSuggestions insights={insights} />
+          <FeatureSuggestions insights={activeInsights} />
         </section>
       )}
 
       {/* Module 18: Usage Patterns */}
-      {insights && (
+      {activeInsights && (
         <section>
           <SectionHeading
             title="Usage Patterns"
             intro="Recurring patterns in how you work with Claude."
           />
-          <UsagePatterns insights={insights} />
+          <UsagePatterns insights={activeInsights} />
         </section>
       )}
 
       {/* Module 19: On the Horizon */}
-      {insights && (
+      {activeInsights && (
         <section id="horizon">
           <SectionHeading
             title="On the Horizon"
             intro="Ideas for what to try next."
           />
-          <OnTheHorizon insights={insights} />
+          <OnTheHorizon insights={activeInsights} />
         </section>
       )}
 
       {/* Module 20: Fun Ending */}
-      {insights && <FunEnding insights={insights} />}
+      {activeInsights && <FunEnding insights={activeInsights} />}
 
       {/* Module 21: Retro Games (retro theme only) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
