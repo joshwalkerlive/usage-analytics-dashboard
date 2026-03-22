@@ -220,7 +220,7 @@ Analytics payload generated successfully.
 
 6. Open the dashboard in the user's browser:
    ```bash
-   open "https://claude-analytics.vercel.app"
+   open "https://usage-analytics-dashboard.vercel.app"
    ```
 
 7. Tell the user: "Dashboard opened. Drag and drop your analytics-payload.json file onto the upload zone."

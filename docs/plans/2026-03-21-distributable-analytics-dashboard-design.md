@@ -757,7 +757,7 @@ Claude (the user's own instance) analyzes the quantitative output and a curated 
    - Payload saved to: ~/.claude/analytics/analytics-payload.json
    - Opening dashboard...
    ```
-5. Open browser: `open "https://claude-analytics.vercel.app"`
+5. Open browser: `open "https://usage-analytics-dashboard.vercel.app"`
 
 **Note:** The dashboard URL opens without the payload attached. The user drags and drops the file (or the dashboard detects a recently-generated local payload — see Section 7). This keeps the flow simple and avoids URL-encoded data limitations.
 
