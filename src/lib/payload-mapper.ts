@@ -55,7 +55,7 @@ export function mapPayloadToDashboardData(
   const goalDistribution: GoalDistribution[] = q.goalDistribution.map((g) => ({
     category: mapGoal(g.goal),
     count: g.count,
-    percentage: totalSessions > 0 ? (g.count / totalSessions) * 100 : 0,
+    percentage: totalSessions > 0 ? Math.round((g.count / totalSessions) * 100) : 0,
   }));
 
   const frictionOverTime: FrictionDataPoint[] = q.sessions
@@ -84,12 +84,12 @@ export function mapPayloadToDashboardData(
     avgSatisfaction: computeAvgForDate(q.sessions, d.date, "satisfactionScore"),
   }));
 
-  const languageStats: LanguageStat[] = q.languageStats.map((l) => ({
+  const languageStats: LanguageStat[] = (q.languageStats ?? []).map((l) => ({
     language: l.language,
     fileCount: l.fileCount,
   }));
 
-  const sessionTypeStats: SessionTypeStat[] = q.sessionTypes.map((s) => ({
+  const sessionTypeStats: SessionTypeStat[] = (q.sessionTypes ?? []).map((s) => ({
     type: s.type,
     count: s.count,
   }));
@@ -107,7 +107,7 @@ export function mapPayloadToDashboardData(
     hours: bucketToHours(t.bucket),
   }));
 
-  const toolErrorStats: ToolErrorStat[] = q.toolErrors.byCategory.map((e) => ({
+  const toolErrorStats: ToolErrorStat[] = (q.toolErrors?.byCategory ?? []).map((e) => ({
     errorType: e.category,
     count: e.count,
   }));
@@ -177,7 +177,7 @@ export function mapPayloadToInsightsReport(
       ambitious: q.atAGlance.ambitiousGoals,
     },
 
-    projectAreas: quant.projectAreas.map((p) => ({
+    projectAreas: (quant.projectAreas ?? []).map((p) => ({
       name: p.name,
       sessionCount: p.sessionCount,
       description: p.description,
@@ -189,8 +189,8 @@ export function mapPayloadToInsightsReport(
     },
 
     multiClauding: {
-      detected: quant.concurrency.parallelUsageDetected,
-      details: quant.concurrency.overlappingSessionCount
+      detected: quant.concurrency?.parallelUsageDetected ?? false,
+      details: quant.concurrency?.overlappingSessionCount
         ? `${quant.concurrency.overlappingSessionCount} overlapping sessions detected`
         : "No parallel usage detected",
     },
@@ -216,6 +216,12 @@ export function mapPayloadToInsightsReport(
     featureRecommendations: q.recommendations.featureSuggestions.map((f) => ({
       title: f.text,
       description: `Priority: ${f.priority}, Effort: ${f.effort}`,
+    })),
+
+    workflowTips: (q.recommendations?.workflowTips ?? []).map((w: any) => ({
+      text: w.text,
+      priority: w.priority,
+      effort: w.effort,
     })),
 
     usagePatterns: [
@@ -250,8 +256,7 @@ export function mapPayloadToInsightsReport(
 // ─── Helpers ────────────────────────────────────────────────
 
 function mapSessionMetricToAnalyzed(s: SessionMetric): AnalyzedSession {
-  // Map V2 SessionGoal to existing GoalCategory
-  // The existing GoalCategory is a subset — map extended goals to "unknown"
+  // Map V2 SessionGoal to GoalCategory
   const goalCategory = mapGoal(s.goal);
 
   // Build toolUsage record from the session's tool data
@@ -275,8 +280,8 @@ function mapSessionMetricToAnalyzed(s: SessionMetric): AnalyzedSession {
 }
 
 /**
- * Maps the V2 expanded SessionGoal to the existing GoalCategory type.
- * Goals not in the original enum map to "unknown".
+ * Maps a V2 SessionGoal string to the GoalCategory type.
+ * Unrecognised goals map to "unknown".
  */
 function mapGoal(
   goal: string
@@ -289,6 +294,10 @@ function mapGoal(
     "config",
     "docs",
     "test",
+    "analytics",
+    "content",
+    "plugin",
+    "workflow",
     "unknown",
   ];
   return validGoals.includes(goal as GoalCategory)

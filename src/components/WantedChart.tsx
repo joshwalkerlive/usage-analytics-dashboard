@@ -23,6 +23,10 @@ const CATEGORY_LABELS: Record<string, string> = {
   config: "Configuration",
   docs: "Documentation",
   test: "Testing",
+  analytics: "Analytics",
+  content: "Content",
+  plugin: "Plugins",
+  workflow: "Workflows",
   unknown: "Other",
 };
 
@@ -34,7 +38,11 @@ const BAR_COLORS = [
   "#f472b6", // pink-400
   "#fb923c", // orange-400
   "#d7e260", // accent
-  "#64748b", // slate-500
+  "#34d399", // emerald-400 (analytics)
+  "#38bdf8", // sky-400 (content)
+  "#f97316", // orange-500 (plugin)
+  "#facc15", // yellow-400 (workflow)
+  "#64748b", // slate-500 (unknown/other)
 ];
 
 export function WantedChart({ data }: WantedChartProps) {

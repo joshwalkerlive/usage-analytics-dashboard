@@ -4,31 +4,33 @@
 
 ### Step 1: Install the Skill
 
-In your Claude Code terminal, run:
+Run this one-liner in your terminal:
 
 ```bash
-claude skill install josh/claude-analytics
+mkdir -p ~/.claude/skills/my-analytics && curl -sL https://raw.githubusercontent.com/joshwalkerlive/usage-analytics-dashboard/main/skill/my-analytics.md -o ~/.claude/skills/my-analytics/SKILL.md
 ```
 
-Or manually: copy the `skill/my-analytics.md` file to `~/.claude/skills/my-analytics.md`.
+Or manually: copy `skill/my-analytics.md` from this repo to `~/.claude/skills/my-analytics/SKILL.md`.
+
+**Verify it worked:** In Claude Code, start a new session and say "analyze my Claude usage".
+Claude should recognize the `my-analytics` skill and begin scanning your sessions.
 
 ### Step 2: Generate Your Analytics
 
-In any Claude Code session, run:
+In any Claude Code session, say:
 
-```
-/my-analytics
-```
+> "Generate my Claude usage analytics"
 
-This takes about 30-90 seconds. It will:
+or
+
+> "Run my analytics dashboard"
+
+This takes about 1-3 minutes depending on your session count. It will:
 - Scan your last 30 days of Claude sessions
 - Compute usage metrics
 - Generate AI-powered insights about your patterns
-- Save a payload file and open the dashboard
-
-### Step 3: View Your Dashboard
-
-The dashboard will open in your browser. Drag and drop the `analytics-payload.json` file from `~/.claude/analytics/` onto the upload zone.
+- Save a payload file to `~/.claude/analytics/analytics-payload.json`
+- Open the dashboard in your browser
 
 ## What You'll See
 
@@ -60,8 +62,13 @@ Your session data is processed entirely on your machine by your Claude instance.
 
 **Dashboard shows errors after upload**
 - Check that you're uploading `analytics-payload.json`, not a raw JSONL file
-- Try regenerating with `/my-analytics`
+- Try regenerating by saying "Generate my Claude usage analytics"
 
 **Skill not found**
-- Verify the skill is installed: check `~/.claude/skills/my-analytics.md` exists
+- Verify the skill is installed: check `~/.claude/skills/my-analytics/SKILL.md` exists
 - Restart Claude Code and try again
+
+**Skill doesn't trigger**
+- Skills are triggered via natural language, not slash commands. Say something like "analyze my Claude usage" or "run my analytics dashboard".
+- Make sure `~/.claude/skills/my-analytics/SKILL.md` exists and is not empty.
+- Start a fresh Claude Code session after installing the skill.

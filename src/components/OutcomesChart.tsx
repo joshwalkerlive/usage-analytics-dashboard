@@ -15,11 +15,21 @@ interface OutcomesChartProps {
 }
 
 const OUTCOME_COLORS: Record<string, string> = {
-  "Completed": "#34d399",   // emerald-400
-  "Partial": "#fbbf24",     // amber-400
-  "Abandoned": "#f87171",   // red-400
-  "Unknown": "#64748b",     // slate-500
+  "completed": "#34d399",
+  "smooth": "#6ee7b7",
+  "success": "#a7f3d0",
+  "high-friction": "#f97316",
+  "partial": "#fbbf24",
+  "abandoned": "#f87171",
+  "unknown": "#64748b",
 };
+
+function displayLabel(value: string): string {
+  return value
+    .split("-")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
 
 const FALLBACK_COLORS = [
   "#34d399",
@@ -76,15 +86,16 @@ export function OutcomesChart({ data }: OutcomesChartProps) {
               itemStyle={{ color: currentTheme.colors.text.secondary }}
               formatter={(
                 value: number,
-                _name: string,
+                name: string,
                 props: { payload?: { pct: number } }
-              ) => [`${value} (${props.payload?.pct ?? 0}%)`, "Sessions"]}
+              ) => [`${value} (${props.payload?.pct ?? 0}%)`, displayLabel(name)]}
             />
             <Legend
               verticalAlign="bottom"
               iconType="circle"
               iconSize={8}
               wrapperStyle={{ fontSize: 11, color: currentTheme.colors.text.tertiary }}
+              formatter={(value: string) => displayLabel(value)}
             />
           </PieChart>
         </ResponsiveContainer>

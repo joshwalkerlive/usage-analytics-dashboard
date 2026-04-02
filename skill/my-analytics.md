@@ -1,6 +1,12 @@
 ---
 name: my-analytics
-description: Generate a comprehensive analytics dashboard of your Claude Code usage from the last 30 days. Scans your local session files, computes quantitative metrics, generates AI-powered qualitative insights, and opens the dashboard in your browser.
+version: 1.0.0
+description: >-
+  This skill should be used when the user asks to analyze their Claude Code usage,
+  generate usage analytics, see session stats, review their Claude activity, create
+  a usage report, or view their Claude dashboard. It scans local session JSONL files
+  from the last 30 days, computes quantitative metrics, generates AI-powered
+  qualitative insights, and produces a JSON payload for a browser dashboard.
 ---
 
 # Claude Usage Analytics Generator
@@ -21,11 +27,18 @@ Execute these phases in order. Report progress to the user after each phase.
 
 **Goal:** Find all Claude Code session files from the last 30 days.
 
-**Scan these directories:**
+**Scan these directories (platform-aware):**
 
-1. `~/.claude/projects/` — recursively find all `*.jsonl` files modified in the last 30 days
-2. `~/Library/Application Support/Claude/claude-code-sessions/` — find `local_*.json` metadata files
-3. `~/Library/Application Support/Claude/local-agent-mode-sessions/` — find metadata files
+1. `~/.claude/projects/` — all platforms. Recursively find all `*.jsonl` files
+   modified in the last 30 days.
+2. Platform-specific session storage:
+   - **macOS:** `~/Library/Application Support/Claude/claude-code-sessions/` and
+     `~/Library/Application Support/Claude/local-agent-mode-sessions/`
+   - **Linux:** `~/.config/claude/claude-code-sessions/` and
+     `~/.config/claude/local-agent-mode-sessions/`
+   - **Windows:** `%APPDATA%/Claude/claude-code-sessions/` and
+     `%APPDATA%/Claude/local-agent-mode-sessions/`
+3. Detect platform via `uname -s` (macOS/Linux) or presence of `%APPDATA%` (Windows).
 
 **Steps:**
 1. Use Bash to list files in each directory with modification time filtering
@@ -43,6 +56,16 @@ Execute these phases in order. Report progress to the user after each phase.
 ### Phase 2: Quantitative Analysis
 
 **Goal:** Parse all session files and compute metrics.
+
+**Guardrails:**
+- If more than 100 sessions are found, process only the most recent 100 (by
+  modification time). Note the cap in `dataQuality.warnings`.
+- For JSONL files larger than 50KB, read in chunks using the Read tool's
+  offset/limit parameters rather than reading the entire file in one call.
+- For every 25 sessions processed, report progress to the user:
+  "Processed {n}/{total} sessions..."
+- If more than 50% of session files fail to parse, warn the user and ask
+  whether to continue with partial data.
 
 **For each JSONL session file:**
 1. Read the file and parse each line as a JSON object
@@ -151,6 +174,10 @@ Report to user: "Analyzed {n} sessions. Computed quantitative metrics."
 
 **Goal:** Generate AI-powered narrative insights from the quantitative data.
 
+**Session count edge case:**
+If total sessions < 15, use all sessions for the sampling strategy. Do not
+attempt to pick 5+5+5 from a pool smaller than 15.
+
 **Session sampling strategy:**
 Select up to 15 representative sessions for deep analysis:
 - Top 5 by highest frictionScore
@@ -164,6 +191,10 @@ For each sampled session, prepare a summary including:
 - All error events (tool name + error indicator)
 - Tool call summary (tool name + count)
 - Do NOT include full file contents or long tool outputs
+- **Privacy filter:** When summarizing user messages, redact anything that
+  resembles an API key, password, token, secret, or credential. Replace with
+  `[REDACTED]`. Do NOT include raw user message content in the payload —
+  only analytical summaries.
 
 **Enrichment pass:**
 For sampled sessions where `goal`, `outcome`, `frictionTypes`, or `helpfulFactors` are `"unknown"` or empty, analyze the session content and fill in better values. Update `classificationSource` to `"ai"` (or `"hybrid"` if the session already had heuristic values that you're supplementing).
@@ -195,6 +226,19 @@ Using the full quantitative data + sampled session summaries, generate:
 
 Report to user: "Generated qualitative insights. {n} sessions enriched by AI analysis."
 
+**Post-enrichment recomputation:**
+After completing all enrichment and qualitative generation, recompute these
+aggregate arrays to reflect any classification changes made during enrichment:
+- `goalDistribution` — recount by updated session goals
+- `outcomes` — recount by updated session outcomes
+- `helpfulFactors` — recount by updated session helpful factors
+- `frictionAndSatisfaction.frictionTypes` — recount by updated friction types
+- `frictionAndSatisfaction.satisfactionBands` — recount by updated satisfaction bands
+- `sessionTypes` — recount by updated session types
+- `dataQuality.classificationSummary` — recount heuristic/ai/hybrid totals
+
+This ensures the aggregate rollups are consistent with the individual session records.
+
 ---
 
 ### Phase 4: Bundle & Launch
@@ -219,9 +263,10 @@ Analytics payload generated successfully.
 ```
 
 6. Open the dashboard in the user's browser:
-   ```bash
-   open "https://usage-analytics-dashboard.vercel.app"
-   ```
+   - **macOS:** `open "https://usage-analytics-dashboard.vercel.app"`
+   - **Linux:** `xdg-open "https://usage-analytics-dashboard.vercel.app"`
+   - **Windows:** `start "https://usage-analytics-dashboard.vercel.app"`
+   - Detect platform via `uname -s` or equivalent.
 
 7. Tell the user: "Dashboard opened. Drag and drop your analytics-payload.json file onto the upload zone."
 
@@ -229,412 +274,20 @@ Analytics payload generated successfully.
 
 ## AnalyticsPayloadV2 Schema Reference
 
-The output JSON must conform to this TypeScript schema:
+The output JSON must conform to the TypeScript schema defined in `references/payload-v2-schema.ts`.
+Read that file before beginning Phase 2. All types, enums, and interfaces in that file
+are normative — your output must match exactly.
 
-```typescript
-// ============================================================
-// Enums & Branded Types
-// ============================================================
-
-export type Platform = "macos" | "linux" | "windows";
-
-export type SessionGoal =
-  | "bug-fix"
-  | "feature"
-  | "refactor"
-  | "explore"
-  | "config"
-  | "docs"
-  | "test"
-  | "analytics"
-  | "content"
-  | "plugin"
-  | "workflow"
-  | "unknown";
-
-export type SessionType =
-  | "quick-task"
-  | "deep-work"
-  | "multi-step"
-  | "standard"
-  | "unknown";
-
-export type SessionOutcome =
-  | "completed"
-  | "smooth"
-  | "success"
-  | "high-friction"
-  | "abandoned"
-  | "partial"
-  | "unknown";
-
-export type SatisfactionBand =
-  | "very-satisfied"
-  | "satisfied"
-  | "neutral"
-  | "frustrated"
-  | "unknown";
-
-export type FrictionType =
-  | "autonomous-exploration"
-  | "environment-config"
-  | "premature-action"
-  | "resistance-to-correction"
-  | "tool-error"
-  | "command-failed"
-  | "file-operation"
-  | "auth"
-  | "dependency"
-  | "ambiguous-intent"
-  | "unknown";
-
-export type HelpfulFactor =
-  | "low-friction"
-  | "deep-automation"
-  | "error-free-tools"
-  | "fast-completion"
-  | "concise-interaction"
-  | "clear-prompting"
-  | "good-environment"
-  | "skill-reuse"
-  | "unknown";
-
-export type ToolErrorCategory =
-  | "command-failed"
-  | "file-operation"
-  | "tool-error"
-  | "auth"
-  | "config"
-  | "dependency"
-  | "network"
-  | "timeout"
-  | "unknown";
-
-export type BigWinImpactType =
-  | "time-saved"
-  | "quality"
-  | "automation"
-  | "delivery"
-  | "learning"
-  | "system-leverage"
-  | "other";
-
-export type RecommendationPriority = "high" | "medium" | "low";
-export type RecommendationEffort = "low" | "medium" | "high";
-
-export type ClassificationSource = "heuristic" | "ai" | "hybrid";
-
-// ============================================================
-// Sub-Interfaces
-// ============================================================
-
-export interface SessionMetric {
-  id: string;
-  project: string; // sanitized project name only, no full paths
-  startTime: string; // ISO 8601
-  endTime?: string; // ISO 8601
-  durationMinutes: number;
-  messageCount: number;
-  toolCallCount: number;
-  errorCount: number;
-  correctionCount?: number;
-  goal: SessionGoal;
-  sessionType: SessionType;
-  outcome: SessionOutcome;
-  frictionScore: number; // 0-100
-  satisfactionScore: number; // 0-100, inferred
-  satisfactionBand?: SatisfactionBand;
-  frictionTypes: FrictionType[];
-  helpfulFactors: HelpfulFactor[];
-  hadWrongApproachCorrection?: boolean;
-  hadEnvironmentIssue?: boolean;
-  hadToolError?: boolean;
-  hadAutonomousExplorationIssue?: boolean;
-  model: string;
-  languageBreakdown?: Array<{
-    language: string;
-    fileCount: number;
-  }>;
-  committedCode?: boolean;
-  notes?: string[];
-  /**
-   * Tracks whether this session's categorical fields (goal, outcome, frictionTypes, etc.)
-   * were set by deterministic heuristics, AI analysis, or a combination.
-   * Used to audit classification quality and improve heuristics over time.
-   */
-  classificationSource: ClassificationSource;
-}
-
-export interface DailyActivityPoint {
-  date: string; // YYYY-MM-DD
-  sessions: number;
-  messages: number;
-  toolCalls: number;
-  errors: number;
-  avgSatisfactionScore?: number; // 0-100
-}
-
-export interface GoalMetric {
-  goal: SessionGoal;
-  count: number;
-}
-
-export interface ToolUsageMetric {
-  name: string;
-  count: number;
-  sessionCount: number;
-  errorCount: number;
-  errorRate: number; // 0.0-1.0 (proportion, NOT percentage)
-  avgCallsPerSession: number;
-  totalDurationSeconds?: number;
-  avgDurationSeconds?: number;
-}
-
-export interface LanguageMetric {
-  language: string;
-  sessionCount: number;
-  fileCount: number;
-  lineEditCount?: number;
-  toolCallCount?: number;
-  messageMentions?: number;
-}
-
-export interface ProjectAreaMetric {
-  name: string;
-  description: string;
-  sessionCount: number;
-  totalMinutes: number;
-  percentageOfTime?: number;
-  /** Which sanitized project names roll up into this area */
-  projects: string[];
-}
-
-// ============================================================
-// Root Payload
-// ============================================================
-
-export interface AnalyticsPayloadV2 {
-  version: "2.0";
-  generatedAt: string; // ISO 8601
-  dateRange: { start: string; end: string };
-  platform: Platform;
-
-  /**
-   * Raw-input provenance and rollup controls.
-   * Important for reconciling discrepancies between dashboard sections.
-   */
-  source: {
-    parserVersion: string;
-    aggregationVersion: string;
-    timezone: string; // IANA timezone, e.g. "America/New_York"
-    dateRangeMode: "inclusive" | "exclusive";
-    rawSessionFilesProcessed: number;
-    rawMessageRecordsProcessed: number;
-    rawToolEventsProcessed: number;
-    filtersApplied: string[];
-    excludedSessions: Array<{
-      id: string;
-      reason: string;
-    }>;
-  };
-
-  /**
-   * Health of the dataset and rollups.
-   */
-  dataQuality: {
-    completenessScore: number; // 0-100
-    warnings: string[];
-    inconsistencies: Array<{
-      metric: string;
-      details: string;
-      severity: "low" | "medium" | "high";
-    }>;
-    classificationSummary: {
-      heuristicCount: number;
-      aiCount: number;
-      hybridCount: number;
-      unknownFieldRate: number; // 0.0-1.0, proportion of fields that remained "unknown"
-    };
-  };
-
-  counts: {
-    sessionCount: number;
-    projectCount: number;
-  };
-
-  quantitative: {
-    overview: {
-      totalSessions: number;
-      totalMessages: number;
-      totalToolCalls: number;
-      totalDurationMinutes: number;
-      avgSessionDurationMinutes: number;
-      avgMessagesPerSession: number;
-      avgToolCallsPerSession: number;
-      sessionsPerDay?: number;
-      avgErrorCountPerSession?: number;
-      avgFrictionScore?: number; // 0-100
-      avgSatisfactionScore?: number; // 0-100
-    };
-
-    sessions: SessionMetric[];
-
-    dailyActivity: DailyActivityPoint[];
-
-    goalDistribution: GoalMetric[];
-
-    goalAchievement: {
-      fullyAchieved: number;
-      mostlyAchieved: number;
-      partiallyAchieved: number;
-      failed: number;
-      unknown: number;
-    };
-
-    sessionTypes: Array<{
-      type: SessionType;
-      count: number;
-    }>;
-
-    toolUsage: ToolUsageMetric[];
-
-    toolErrors: {
-      byCategory: Array<{
-        category: ToolErrorCategory;
-        count: number;
-      }>;
-      byTool: Array<{
-        tool: string;
-        errorCount: number;
-      }>;
-    };
-
-    languageStats: LanguageMetric[];
-
-    timeOfDay: Array<{
-      bucket: "morning" | "afternoon" | "evening" | "night";
-      count: number;
-    }>;
-
-    responseTiming: {
-      distribution: Array<{
-        bucket: "<5s" | "5-15s" | "15-30s" | "30s-1m" | "1-3m" | "3-10m" | ">10m";
-        count: number;
-      }>;
-      avgSeconds: number;
-      medianSeconds: number;
-      p90Seconds?: number;
-    };
-
-    projectAreas: ProjectAreaMetric[];
-
-    topProjects: Array<{
-      name: string;
-      sessions: number;
-      totalMinutes: number;
-    }>;
-
-    outcomes: Array<{
-      outcome: SessionOutcome;
-      count: number;
-    }>;
-
-    helpfulFactors: Array<{
-      factor: HelpfulFactor;
-      count: number;
-    }>;
-
-    frictionAndSatisfaction: {
-      avgFrictionScore: number; // 0-100
-      avgSatisfactionScore: number; // 0-100
-      frictionTypes: Array<{
-        type: FrictionType;
-        count: number;
-      }>;
-      satisfactionBands: Array<{
-        band: SatisfactionBand;
-        count: number;
-      }>;
-    };
-
-    concurrency: {
-      parallelUsageDetected: boolean;
-      overlappingSessionCount?: number;
-    };
-  };
-
-  qualitative: {
-    atAGlance: {
-      workingFactors: string[];
-      hinderingFactors: string[];
-      quickWins: string[];
-      ambitiousGoals: string[];
-    };
-
-    bigWins: Array<{
-      title: string;
-      description: string;
-      sessionRef: string;
-      impactType?: BigWinImpactType;
-      evidence?: string[];
-      estimatedValue?: Array<{
-        metric: string;
-        value: number;
-        unit: string;
-      }>;
-    }>;
-
-    frictionDeepDive: Array<{
-      pattern: string;
-      frequency: string;
-      suggestion: string;
-      relatedFrictionTypes?: FrictionType[];
-      exampleSessionRefs?: string[];
-    }>;
-
-    usagePatterns: {
-      style: string;
-      strengths: string[];
-      growthAreas: string[];
-      keyInsight?: string;
-    };
-
-    recommendations: {
-      claudeMdSuggestions: Array<{
-        text: string;
-        priority: RecommendationPriority;
-      }>;
-      workflowTips: Array<{
-        text: string;
-        priority: RecommendationPriority;
-        effort: RecommendationEffort;
-      }>;
-      featureSuggestions: Array<{
-        text: string;
-        priority: RecommendationPriority;
-        effort: RecommendationEffort;
-      }>;
-    };
-
-    onTheHorizon?: Array<{
-      title: string;
-      description: string;
-      tip?: string;
-    }>;
-  };
-
-  /**
-   * Optional supporting artifacts (skill files, hooks, configs)
-   * referenced in qualitative narratives.
-   */
-  artifacts?: Array<{
-    type: "skill" | "hook" | "command" | "config" | "report-snippet";
-    title: string;
-    content: string;
-    relatedSessionRef?: string;
-  }>;
-}
-```
+Key points from the schema:
+- Root type: `AnalyticsPayloadV2`
+- Version field must be `"2.0"`
+- Session metrics: `SessionMetric` with friction/satisfaction scores (0-100)
+- Goals: 12 possible `SessionGoal` values (bug-fix, feature, refactor, explore, config, docs, test, analytics, content, plugin, workflow, unknown)
+- Outcomes: 7 possible `SessionOutcome` values (completed, smooth, success, high-friction, abandoned, partial, unknown)
+- Satisfaction bands: 4 values (very-satisfied, satisfied, neutral, frustrated)
+- All timestamps: ISO 8601
+- Error rates: 0.0-1.0 (proportions, NOT percentages)
+- Scores: 0-100 (integers)
 
 ## Important Notes
 
@@ -643,3 +296,6 @@ export interface AnalyticsPayloadV2 {
 - **Rates vs scores:** Error rates use 0.0-1.0 (proportions). Scores use 0-100 (integers).
 - **Timestamps:** All timestamps must be ISO 8601 format.
 - **Token budget:** Keep Phase 3 focused on the 15 sampled sessions to control token usage.
+- **Notes and artifacts fields:** The `notes` field on sessions and `artifacts`
+  array must contain only analytical observations, never quoted user input or
+  file contents.

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
 
 export type ThemeType = "morning" | "day" | "evening" | "dark" | "retro";
 
@@ -256,8 +256,21 @@ const THEMES: Record<ThemeType, Theme> = {
   },
 };
 
+function isValidTheme(value: string): value is ThemeType {
+  return ["morning", "day", "evening", "dark", "retro"].includes(value);
+}
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<ThemeType>("morning");
+  const [theme, setThemeState] = useState<ThemeType>(() => {
+    if (typeof window === "undefined") return "morning";
+    const stored = localStorage.getItem("analytics-theme");
+    return stored && isValidTheme(stored) ? stored : "morning";
+  });
+
+  const setTheme = useCallback((t: ThemeType) => {
+    setThemeState(t);
+    localStorage.setItem("analytics-theme", t);
+  }, []);
 
   const currentTheme = THEMES[theme];
   const availableThemes = Object.values(THEMES);

@@ -9,12 +9,14 @@ interface FeatureSuggestionsProps {
 export function FeatureSuggestions({ insights }: FeatureSuggestionsProps) {
   const suggestions = insights.claudeMdSuggestions;
   const features = insights.featureRecommendations;
+  const tips = insights.workflowTips;
   const [checked, setChecked] = useState<Set<string>>(new Set());
 
   const hasSuggestions = suggestions && suggestions.length > 0;
   const hasFeatures = features && features.length > 0;
+  const hasTips = tips && tips.length > 0;
 
-  if (!hasSuggestions && !hasFeatures) return null;
+  if (!hasSuggestions && !hasFeatures && !hasTips) return null;
 
   const toggleCheck = (id: string) => {
     setChecked((prev) => {
@@ -137,6 +139,52 @@ export function FeatureSuggestions({ insights }: FeatureSuggestionsProps) {
               )}
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Workflow Tips */}
+      {hasTips && (
+        <div className="bg-navy-900/50 border border-navy-700/50 rounded-xl p-6">
+          <h3 className="text-sm font-semibold text-navy-100 mb-4">
+            Workflow Tips
+          </h3>
+          <ul className="space-y-3">
+            {tips.map((tip, index) => (
+              <li
+                key={index}
+                className="flex items-start gap-3"
+              >
+                <span className="text-accent mt-0.5 shrink-0">
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={1.5}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"
+                    />
+                  </svg>
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-navy-200 leading-relaxed">
+                    {tip.text}
+                  </p>
+                  <div className="flex gap-3 mt-1.5">
+                    <span className="text-xs text-navy-400">
+                      Priority: {tip.priority}
+                    </span>
+                    <span className="text-xs text-navy-400">
+                      Effort: {tip.effort}
+                    </span>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
     </div>

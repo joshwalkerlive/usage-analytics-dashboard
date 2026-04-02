@@ -69,6 +69,53 @@ describe("validatePayload", () => {
     expect(result.warnings.some((w) => w.includes("count"))).toBe(true);
   });
 
+  it("warns when session frictionScore is not a number", () => {
+    const bad = {
+      ...mockPayloadV2,
+      quantitative: {
+        ...mockPayloadV2.quantitative,
+        sessions: [
+          { ...mockPayloadV2.quantitative.sessions[0], frictionScore: "high" },
+          ...mockPayloadV2.quantitative.sessions.slice(1),
+        ],
+      },
+    };
+    const result = validatePayload(bad);
+    expect(result.warnings.some((w) => w.includes("frictionScore"))).toBe(true);
+  });
+
+  it("errors when overview.totalSessions is not a number", () => {
+    const bad = {
+      ...mockPayloadV2,
+      quantitative: {
+        ...mockPayloadV2.quantitative,
+        overview: {
+          ...mockPayloadV2.quantitative.overview,
+          totalSessions: "five",
+        },
+      },
+    };
+    const result = validatePayload(bad);
+    expect(result.valid).toBe(false);
+    expect(
+      result.errors.some((e) => e.includes("quantitative.overview.totalSessions"))
+    ).toBe(true);
+  });
+
+  it("warns when languageStats is missing (not error)", () => {
+    const bad = {
+      ...mockPayloadV2,
+      quantitative: {
+        ...mockPayloadV2.quantitative,
+        languageStats: undefined,
+      },
+    };
+    const result = validatePayload(bad);
+    expect(result.warnings.some((w) => w.includes("languageStats"))).toBe(true);
+    // Should NOT be in errors
+    expect(result.errors.some((e) => e.includes("languageStats"))).toBe(false);
+  });
+
   it("accepts payload with optional artifacts", () => {
     const withArtifacts = {
       ...mockPayloadV2,

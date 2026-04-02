@@ -1,5 +1,6 @@
 import type { SessionMetrics } from "@/lib/types";
 import type { InsightsReport } from "@/lib/insights-types";
+import { hexToRgba } from "@/lib/chart-utils";
 import { useTheme } from "@/context/ThemeContext";
 
 interface HeaderProps {
@@ -8,15 +9,6 @@ interface HeaderProps {
   dateRange?: { start: string; end: string } | null;
   onRefresh?: () => void;
   onClear?: () => void;
-}
-
-function hexToRgba(hex: string, alpha: number): string {
-  const clean = hex.replace("#", "");
-  if (clean.length !== 6) return `rgba(0,0,0,${alpha})`;
-  const r = parseInt(clean.slice(0, 2), 16);
-  const g = parseInt(clean.slice(2, 4), 16);
-  const b = parseInt(clean.slice(4, 6), 16);
-  return `rgba(${r},${g},${b},${alpha})`;
 }
 
 function formatDate(iso: string): string {

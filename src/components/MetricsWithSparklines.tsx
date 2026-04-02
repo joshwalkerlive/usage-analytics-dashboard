@@ -101,7 +101,7 @@ export function MetricsWithSparklines({ metrics, dailyMetrics }: { metrics: Sess
     {
       label: "Sessions / Day",
       value: sessionsPerDay,
-      trend: sessionsPerDay > "2.5" ? "up" : "neutral",
+      trend: parseFloat(sessionsPerDay) > 2.5 ? "up" : "neutral",
       tooltip: `Average sessions per active day. ${sessionsPerDay} sessions/day over ${days} days with at least one session.`,
     },
   ];

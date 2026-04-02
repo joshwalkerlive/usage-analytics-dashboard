@@ -53,6 +53,12 @@ export interface InsightsReport {
     code?: string;
   }[];
 
+  workflowTips: {
+    text: string;
+    priority: string;
+    effort: string;
+  }[];
+
   usagePatterns: {
     title: string;
     summary: string;

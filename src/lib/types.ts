@@ -58,6 +58,10 @@ export type GoalCategory =
   | "config"
   | "docs"
   | "test"
+  | "analytics"
+  | "content"
+  | "plugin"
+  | "workflow"
   | "unknown";
 
 export interface ToolUsageStat {

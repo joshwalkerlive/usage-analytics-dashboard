@@ -18,6 +18,16 @@ export function UploadZone({ onPayloadLoaded }: UploadZoneProps) {
       const file = acceptedFiles[0];
       if (!file) return;
 
+      if (file.size > 25 * 1024 * 1024) {
+        setValidation({
+          valid: false,
+          errors: ["File is too large (max 25 MB). Analytics payloads are typically under 1 MB."],
+          warnings: [],
+        });
+        setParsing(false);
+        return;
+      }
+
       setParsing(true);
       setValidation(null);
 

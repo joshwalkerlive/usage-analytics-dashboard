@@ -83,6 +83,10 @@ const GOAL_KEYWORDS: Record<GoalCategory, string[]> = {
   config: ["config", "setup", "install", "configure", "environment"],
   docs: ["doc", "readme", "comment", "documentation"],
   test: ["test", "spec", "coverage", "assert"],
+  analytics: ["analytics", "metrics", "usage", "stats", "dashboard"],
+  content: ["content", "write", "blog", "post", "article"],
+  plugin: ["plugin", "extension", "addon", "skill"],
+  workflow: ["workflow", "automate", "pipeline", "ci", "cd"],
   unknown: [],
 };
 

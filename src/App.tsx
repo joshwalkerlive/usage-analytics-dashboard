@@ -257,14 +257,16 @@ export default function App() {
         </section>
       )}
 
-      {/* Module 2b: Moments of Discovery */}
-      <section>
-        <SectionHeading
-          title="Moments of Discovery"
-          intro="Sessions where Claude made a real difference."
-        />
-        <HighlightReel />
-      </section>
+      {/* Module 2b: Moments of Discovery (dev-only, needs /api/facets) */}
+      {!uploadedPayload && (
+        <section>
+          <SectionHeading
+            title="Moments of Discovery"
+            intro="Sessions where Claude made a real difference."
+          />
+          <HighlightReel />
+        </section>
+      )}
 
       {/* Module 3: Navigation */}
       <NavTOC />

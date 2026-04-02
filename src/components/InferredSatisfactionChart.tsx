@@ -16,23 +16,28 @@ interface InferredSatisfactionChartProps {
 }
 
 const SATISFACTION_COLORS: Record<string, string> = {
-  "Very Satisfied": "#34d399",  // emerald-400
-  "Satisfied": "#d7e260",       // accent
-  "Neutral": "#94a3b8",         // slate-400
-  "Frustrated": "#fb923c",      // orange-400
-  "Very Frustrated": "#f87171", // red-400
+  "very-satisfied": "#34d399",  // emerald-400
+  "satisfied": "#d7e260",       // accent
+  "neutral": "#94a3b8",         // slate-400
+  "frustrated": "#fb923c",      // orange-400
 };
 
 const FALLBACK_COLOR = "#818cf8";
 
 // Ensure consistent ordering from positive to negative
 const LEVEL_ORDER = [
-  "Very Satisfied",
-  "Satisfied",
-  "Neutral",
-  "Frustrated",
-  "Very Frustrated",
+  "very-satisfied",
+  "satisfied",
+  "neutral",
+  "frustrated",
 ];
+
+function displayLabel(level: string): string {
+  return level
+    .split("-")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
 
 export function InferredSatisfactionChart({
   data,
@@ -64,6 +69,7 @@ export function InferredSatisfactionChart({
           >
             <XAxis
               dataKey="level"
+              tickFormatter={displayLabel}
               tick={{ fill: currentTheme.colors.text.tertiary, fontSize: 11 }}
               axisLine={{ stroke: currentTheme.colors.border }}
               tickLine={false}
@@ -82,6 +88,7 @@ export function InferredSatisfactionChart({
               }}
               labelStyle={{ color: currentTheme.colors.text.primary }}
               itemStyle={{ color: currentTheme.colors.text.secondary }}
+              labelFormatter={displayLabel}
               formatter={(value: number) => [value, "Sessions"]}
             />
             <Bar dataKey="count" radius={[4, 4, 0, 0]} barSize={36}>
